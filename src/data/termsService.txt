@@ -1,0 +1,54 @@
+Terms of Service
+
+Last Updated:April 24, 2025
+
+Welcome to Sejal Engitech Pvt. Ltd. These Terms of Service ("Terms") govern your use of our services, including our website, mobile applications, and any other features or content offered (collectively, the "Services").
+
+By accessing or using our Services, you agree to be bound by these Terms. If you do not agree to these Terms, you must not use our Services.
+1. Use of Services
+
+You agree to use our Services only for lawful purposes and in accordance with these Terms. You must not use the Services in any way that could harm us or impair others’ use of them, such as:
+
+    Violating any applicable law or regulation
+    Infringing upon or violating intellectual property rights
+    Interfering with or disrupting our systems or networks
+    Impersonating any person or entity
+
+2. Accounts
+
+You may be required to create an account to use certain features. You are responsible for maintaining the confidentiality of your account and password and for any activity under your account.
+3. Intellectual Property
+
+All content and materials included in the Services, such as text, graphics, logos, software, and trademarks, are owned by or licensed to Sejal Engitech Pvt. Ltd. and are protected by intellectual property laws. You may not use our content without prior written permission.
+4. User Content
+
+If you submit or upload any content (e.g., reviews, comments, feedback), you grant us a non-exclusive, royalty-free, worldwide license to use, reproduce, and display that content in connection with the Services. You are solely responsible for any content you submit.
+5. Payments
+
+Certain features or services may require payment. All payments are processed through third-party providers (e.g., Stripe, PayPal) and are subject to their terms. We do not store full payment details on our servers.
+6. Termination
+
+We reserve the right to suspend or terminate your access to the Services at our sole discretion, with or without notice, if we believe you have violated these Terms or applicable laws.
+7. Disclaimer of Warranties
+
+The Services are provided "as is" and "as available" without warranties of any kind. We do not guarantee that the Services will be uninterrupted or error-free.
+8. Limitation of Liability
+
+To the maximum extent permitted by law, Sejal Engitech Pvt. Ltd. shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Services.
+9. Indemnification
+
+You agree to defend, indemnify, and hold harmless Sejal Engitech Pvt. Ltd. and its affiliates, officers, and employees from any claims or demands arising out of your use of the Services or your violation of these Terms.
+10. Privacy
+
+Your use of the Services is also governed by our Privacy Policy.
+11. Dispute Resolution
+
+In case of any dispute, we encourage you to contact us first to resolve it informally. If unresolved, disputes will be subject to arbitration or handled in a competent court in Supreme Court of India.
+12. Changes to These Terms
+
+We may update these Terms from time to time. We will notify you of material changes by posting a notice on our website or through email. Continued use after the changes become effective constitutes acceptance of the revised Terms.
+13. Contact Us
+
+If you have any questions or concerns about these Terms, you can reach us at:
+
+    📧 Email : <email here>

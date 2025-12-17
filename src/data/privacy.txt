@@ -1,0 +1,199 @@
+Privacy Policy
+
+Last Updated: April 23, 2025
+
+This Privacy Policy describes how Sejal Engitech Pvt. Ltd. collects, uses, and discloses your personal information when you use our services, including our website and mobile application(s) (collectively, the "Services").
+1. Information We Collect
+a. Personal Information
+
+The specific types of Personal Information we collect depend on how you interact with our Services, but may include:
+
+    Name
+    Email address
+    Contact details (e.g., phone number, mailing address if provided)
+    Billing and payment information (handled securely by third-party processors)
+    Account login credentials
+    Location data (where you have granted us permission, e.g., precise or approximate location)
+
+b. Usage and Technical Data
+
+We automatically collect certain information about your device and how you interact with our Services. This may include:
+
+    Device and browser information (type, operating system)
+    IP address
+    App/website usage patterns (e.g., pages visited, features used, time spent, actions taken)
+    Log data (e.g., crash reports, error logs)
+    Analytics data
+
+c. Tracking Technologies
+
+We use cookies, web beacons, SDKs (Software Development Kits used in mobile apps), and similar tracking technologies to collect information, enhance your experience, analyze usage patterns, and for advertising purposes. Details about our use of these technologies and how to manage them are provided in Section 7.
+2. Legal Basis for Data Processing
+
+We process your information in accordance with applicable data protection laws, including:
+
+    GDPR (General Data Protection Regulation - European Union)
+    CCPA / CPRA (California Consumer Privacy Act / California Privacy Rights Act - USA)
+    CalOPPA (California Online Privacy Protection Act)
+    PIPEDA (Personal Information Protection and Electronic Documents Act - Canada)
+    UK Data Protection Act
+    Information Technology Act, 2000 and SPDI Rules, 2011 (India)
+    Digital Personal Data Protection Act, 2023 (India)
+    Other relevant global data protection laws
+
+Our legal bases for processing your Personal Information include:
+
+    User Consent: Where you have given us clear consent for specific processing purposes (e.g., for sending marketing emails, placing non-essential cookies).
+    Contractual Necessity: Where processing is necessary to perform a contract with you or to take steps at your request before entering into a contract (e.g., processing payment information to fulfill an order).
+    Legal Obligations: Where processing is necessary to comply with a legal obligation to which we are subject (e.g., retaining transaction records for tax purposes).
+    Legitimate Interests: Where processing is necessary for our legitimate interests or those of a third party, and these interests are not overridden by your data protection rights (e.g., improving our services, fraud prevention, direct marketing based on an existing relationship where permitted by law).
+
+3. How We Use Your Information
+
+We may use your data for various purposes, including:
+
+    To provide, operate, and maintain our Services (using account credentials, usage data)
+    To personalize your user experience (using usage patterns, preferences)
+    To process transactions and fulfill orders (using billing and payment information)
+    To conduct analytics and performance monitoring to understand how our Services are used and improve them (using usage and technical data)
+    To provide customer support and respond to your inquiries (using contact details, account information, communication history)
+    To send you service-related communications (e.g., updates, security alerts)
+    To send you emails, newsletters, or promotional content, in accordance with your marketing preferences and applicable law (using email address)
+    To monitor and analyze trends, usage, and activities in connection with our Services
+    To detect, prevent, and address technical issues, security incidents, and fraudulent activity (using technical data, log data)
+    To comply with legal obligations and enforce our terms and policies
+
+4. Analytics Tools
+
+We use third-party analytics tools like Google Analytics, Mixpanel, and Firebase Analytics to help us understand user behavior and improve our Services. These tools collect and process usage and technical data, often in an aggregated and anonymized form that is not linked back to individual users.
+
+You can typically opt out of some analytics tracking via browser settings or specific tools provided by the analytics providers (e.g., the Google Analytics Opt-Out Add-on). Please see Section 7 for more information about managing tracking technologies.
+5. Email Marketing
+
+If you opt in or if we have a legal basis to do so, we may send you emails regarding updates, promotions, or newsletters via third-party providers such as MailChimp, SendGrid, or other similar services. You can unsubscribe from marketing emails at any time by clicking the unsubscribe link in the email or by contacting us directly.
+6. Advertising and Retargeting
+
+We may work with third-party ad networks and advertising partners, such as Google Ads, Meta (Facebook) Ads, and AdMob, to display advertising on our Services or manage our advertising on other sites. These services may use cookies or tracking pixels to collect data about your activities on our Services and other sites to provide personalized ads.
+
+You can often adjust your ad preferences through your device or browser settings or by utilizing industry opt-out tools (e.g., the Digital Advertising Alliance's opt-out tool). Please see also Section 7 regarding Cookies and Tracking Technologies and Section 15 regarding California rights.
+7. Cookies and Other Tracking Technologies Management
+
+As mentioned in Section 1c, we use cookies and similar technologies. These technologies are categorized based on their function:
+
+    Strictly Necessary: Essential for the operation of our Services (e.g., enabling login). These do not require consent.
+    Performance/Analytics: Collect information about how you use our Services to improve their functionality and performance.
+    Functional: Remember choices you make (e.g., username, language) to provide enhanced, more personal features.
+    Targeting/Advertising: Used to deliver ads more relevant to you and your interests.
+
+Where required by applicable law, we obtain your consent before placing non-essential cookies on your device.
+8. Data Security
+
+We implement reasonable technical, administrative, and physical security measures designed to protect your Personal Information from unauthorized access, disclosure, use, alteration, or destruction. These measures may include data encryption, access controls, secure storage facilities, and regular security assessments.
+
+While we strive to protect your Personal Information, no security system is completely impenetrable. We cannot guarantee the absolute security of your information.
+9. Payments
+
+For payment processing, we use secure third-party providers, including PayPal, Stripe, Google Pay / Apple Pay. These providers handle your payment information directly. We do not store your full payment card details on our servers. These payment processors adhere to their own privacy policies and compliance standards, such as PCI-DSS.
+10. Sharing Your Information
+
+We may share your Personal Information with third parties in the following circumstances:
+
+    Service Providers: We share information with third-party vendors and service providers who perform services on our behalf, such as hosting, data storage, analytics, payment processing, customer support, email delivery, and marketing services. These providers are authorized to use your Personal Information only as necessary to provide these services to us.
+    Advertising and Marketing Partners: With your consent where required, we may share information with advertising networks and marketing partners to manage and display advertisements.
+    Business Transfers: In connection with or during negotiations of any merger, sale of company assets, financing, or acquisition of all or a portion of our business by another company.
+    Legal Requirements: If required to do so by law or in response to valid requests by public authorities (e.g., a court order, government investigation).
+    Protection of Rights: To protect our rights, property, or safety, or the rights, property, or safety of others, including enforcing contracts or policies, or in connection with investigating or preventing illegal activity.
+    With Your Consent: We may share your information with other third parties when we have your explicit consent to do so.
+
+We do not sell your personal information to third parties for monetary consideration. As noted in Section 15, we address the concept of "sharing" for targeted advertising under CCPA/CPRA.
+11. International Data Transfers
+
+Your data may be transferred to and processed in countries outside your own, including countries that may not have the same level of data protection as your home jurisdiction. When we transfer Personal Information across international borders, we implement appropriate safeguards to ensure your data remains protected in accordance with applicable laws. These safeguards may include using Standard Contractual Clauses (SCCs) approved by the European Commission or other relevant bodies, or relying on other legally approved transfer mechanisms.
+12. Data Retention
+
+We retain your Personal Information only for as long as necessary to fulfill the purposes for which we collected it, including for the purposes of satisfying any legal, accounting, or reporting requirements. To determine the appropriate retention period, we consider the amount, nature, and sensitivity of the Personal Information, the potential risk of harm from unauthorized use or disclosure, the purposes for which we process your Personal Information, and whether we can achieve those purposes through other means, and the applicable legal requirements. When your Personal Information is no longer required, we securely delete or anonymize it.
+13. Your Privacy Rights
+
+Depending on your jurisdiction and the applicable laws, you may have certain rights regarding your Personal Information. These rights may include:
+
+    Right to Access: Request a copy of the Personal Information we hold about you.
+    Right to Rectification: Request correction of inaccurate or incomplete Personal Information.
+    Right to Deletion (Right to Be Forgotten): Request the deletion of your Personal Information.
+    Right to Opt-Out of Selling or Sharing: Where applicable (e.g., under CCPA/CPRA), the right to opt-out of the sale or sharing of your Personal Information.
+    Right to Data Portability: Receive your Personal Information in a structured, commonly used, and machine-readable format and transmit it to another controller.
+    Right to Object or Restrict Processing: Object to or request restriction of certain processing activities.
+    Right to Withdraw Consent: Withdraw your consent at any time where processing is based on consent.
+    Right to Lodge a Complaint: Lodge a complaint with a supervisory authority.
+
+Exercising Your Rights:
+
+To exercise any of these rights, please contact us using the contact details provided in Section 21.
+
+To protect your privacy and security, we may need to verify your identity before processing your request. This may require you to provide information associated with your account or a recent interaction. We will respond to your request within 30 days, or as required by applicable law. In some cases, there may be a lawful basis for us to decline your request.
+14. Children’s Privacy
+
+Our Services are not intended for individuals under the age of 13 (or the applicable minimum age in your region). We do not knowingly collect Personal Information from children under this age. If we become aware that we have inadvertently collected Personal Information from a child under the applicable minimum age without proper legal consent, we will take steps to delete it as soon as possible.
+15. Your California Privacy Rights (CCPA / CPRA)
+
+If you are a California resident, you have specific rights regarding your Personal Information under the CCPA/CPRA, including:
+
+    Right to Know: Request details about the categories and specific pieces of Personal Information we have collected about you, the sources of collection, the purposes for collecting or selling/sharing it, and the categories of third parties with whom we disclose or share it.
+    Right to Deletion: Request the deletion of your Personal Information.
+    Right to Opt-Out of Selling or Sharing: The right to opt-out of the sale or sharing of your Personal Information. As noted in Section 10, we do not sell your personal information. If our use of cookies and tracking technologies for targeted advertising constitutes "sharing" under CCPA/CPRA, you have the right to opt-out of this sharing.
+    Right to Non-Discrimination: The right not to receive discriminatory treatment for exercising your CCPA/CPRA rights.
+    Right to Limit Use and Disclosure of Sensitive Personal Information: As applicable, the right to limit the use and disclosure of your sensitive personal information.
+
+To make a request under CCPA/CPRA, please contact us at <email here>. You may be required to verify your identity. You may also designate an authorized agent to make a request on your behalf. To opt-out of the selling or sharing of your personal information, please contact us or utilize any designated opt-out links provided on our Services (e.g., a "Do Not Sell or Share My Personal Information" link if implemented).
+16. Your EU/EEA Privacy Rights (GDPR)
+
+If you are a resident of the EU/EEA, you have specific rights under the GDPR, as detailed in Section 13, including:
+
+    Right to access
+    Right to rectification
+    Right to erasure (right to be forgotten)
+    Right to restrict processing
+    Right to data portability
+    Right to object to processing (including for direct marketing and profiling)
+    Right to withdraw consent
+    Right to lodge a complaint with a supervisory authority
+
+To exercise any of these rights, please contact us at <email here>
+17. California Do Not Track Disclosure (CalOPPA)
+
+Our Services do not currently respond to browser "Do Not Track" signals. However, we offer other ways to opt out of tracking as described in Section 7 (Cookie Management) and Section 15 (California Opt-Outs).
+18. Third-Party Links and Services
+
+Our Services may include links to third-party websites, apps, or services that are not operated by us. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services. Their privacy practices are governed by their own policies, which we encourage you to review.
+19. Updates to This Privacy Policy
+
+We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. The "Last Updated" date at the top of this policy will indicate when it was last revised.
+
+If we make material changes to this policy (changes that significantly impact how we collect, use, or share your information), we will notify you by email, by posting a prominent notice on our website or service, or by other appropriate means prior to the change becoming effective. We encourage you to review this Privacy Policy periodically to stay informed about how we are protecting your information. Your continued use of our Services after the revised policy has become effective means that you have read and understand the updated terms.
+20. Your Rights Under Indian Law (India Only)
+
+For users based in India, we comply with the applicable data protection frameworks, including the Information Technology Act, 2000 and the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 (SPDI Rules), and the Digital Personal Data Protection Act, 2023 (DPDP Act).
+a. User Rights
+
+Indian users may have rights including:
+
+    The right to know what personal data we collect and why.
+    The right to access, correct, and delete their personal information.
+    The right to withdraw consent at any time where processing is based on consent.
+    The right to nominate someone to exercise their rights in the event of death or incapacity (as per DPDP Act).
+
+b. Data Processing Principles
+
+We follow principles aligned with Indian data laws, including consent-based processing, purpose limitation, data minimization, and security safeguards.
+c. Grievance Officer (As Required by Indian Law)
+
+In compliance with Section 5(9) of the SPDI Rules:
+
+
+Email: <email here>
+
+Please direct any grievances specific to the collection, retention, usage, and disclosure of Sensitive Personal Data or Information to the Grievance Officer. For general privacy inquiries, please use the contact details in Section 21.
+21. Contact Us
+
+If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:
+
+📧 Email: <email here>
