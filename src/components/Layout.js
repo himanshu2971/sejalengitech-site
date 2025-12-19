@@ -15,12 +15,32 @@ export default function Layout({ children }) {
             <span className="text-xs text-slate-400">Alambana Tech Group</span>
           </div>
           {/* Mobile menu button */}
+          {/* Mobile menu button */}
           <button
+            type="button"
             onClick={() => setOpen((v) => !v)}
-            className="sm:hidden inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-200 hover:border-cyan-400"
             aria-label="Toggle menu"
+            aria-expanded={open}
+            className="sm:hidden group inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-700 bg-slate-950/40 hover:border-cyan-400 transition"
           >
-            {open ? "Close" : "Menu"}
+            <span className="sr-only">Menu</span>
+            <div className="relative h-5 w-6">
+              <span
+                className={`absolute left-0 top-0 h-0.5 w-6 bg-slate-200 transition-all duration-300 ${
+                  open ? "translate-y-2 rotate-45 bg-cyan-300" : ""
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-2 h-0.5 w-6 bg-slate-200 transition-all duration-300 ${
+                  open ? "opacity-0" : ""
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-4 h-0.5 w-6 bg-slate-200 transition-all duration-300 ${
+                  open ? "-translate-y-2 -rotate-45 bg-cyan-300" : ""
+                }`}
+              />
+            </div>
           </button>
 
           <nav className="hidden sm:flex gap-6 text-sm">
@@ -43,38 +63,38 @@ export default function Layout({ children }) {
           {/* Mobile dropdown menu */}
           {open && (
             <div className="sm:hidden border-t border-slate-800 bg-slate-900/80">
-              <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-3 text-sm">
+              <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-3 text-sm">
                 <Link
                   href="/"
-                  className="hover:text-cyan-300"
+                  className="rounded-md px-2 py-2 hover:bg-slate-800/60 hover:text-cyan-300 transition"
                   onClick={() => setOpen(false)}
                 >
                   Home
                 </Link>
                 <Link
                   href="/about"
-                  className="hover:text-cyan-300"
+                  className="rounded-md px-2 py-2 hover:bg-slate-800/60 hover:text-cyan-300 transition"
                   onClick={() => setOpen(false)}
                 >
                   About
                 </Link>
                 <Link
                   href="/services"
-                  className="hover:text-cyan-300"
+                  className="rounded-md px-2 py-2 hover:bg-slate-800/60 hover:text-cyan-300 transition"
                   onClick={() => setOpen(false)}
                 >
                   Services
                 </Link>
                 <Link
                   href="/projects"
-                  className="hover:text-cyan-300"
+                  className="rounded-md px-2 py-2 hover:bg-slate-800/60 hover:text-cyan-300 transition"
                   onClick={() => setOpen(false)}
                 >
                   Projects
                 </Link>
                 <Link
                   href="/contact"
-                  className="hover:text-cyan-300"
+                  className="rounded-md px-2 py-2 hover:bg-slate-800/60 hover:text-cyan-300 transition"
                   onClick={() => setOpen(false)}
                 >
                   Contact
