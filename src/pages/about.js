@@ -49,7 +49,7 @@ export default function About() {
                     At a glance
                   </p>
                   <p className="text-2xl font-bold text-cyan-300 mb-1">
-                    Since 2011
+                    Since 2014
                   </p>
                   <p className="text-slate-300 text-sm">
                     A decade of experience serving businesses with engineering,
