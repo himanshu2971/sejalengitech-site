@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { useState } from "react";
+import SEO from "@/components/seo/SEO";
 
-export default function Layout({ children }) {
+export default function Layout({ children, seo }) {
+
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
@@ -14,7 +16,8 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
-      {/* Shared header / nav */}
+      <SEO {...seo} />
+      {/* Shared header / nav */} 
       <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex flex-col">
