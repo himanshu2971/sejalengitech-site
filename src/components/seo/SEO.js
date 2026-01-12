@@ -32,7 +32,9 @@ export default function SEO({
 
       <link key="canonical" rel="canonical" href={url} />
 
-      {noindex && <meta key="robots" name="robots" content="noindex,nofollow" />}
+      {noindex && (
+        <meta key="robots" name="robots" content="noindex,nofollow" />
+      )}
 
       {/* Open Graph */}
       <meta key="og:type" property="og:type" content="website" />
@@ -55,6 +57,72 @@ export default function SEO({
         content={metaDesc}
       />
       <meta key="twitter:image" name="twitter:image" content={image} />
+
+      <script
+        key="jsonld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            {
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": "https://www.sejalengitech.in/#organization",
+                  name: "Sejal Engitech Private Limited",
+                  url: "https://www.sejalengitech.in/",
+                  logo: "https://www.sejalengitech.in/logo.png",
+                  email: "info.sejalengitech@gmail.com",
+                  telephone: "+91-7004767198",
+                  contactPoint: [
+                    {
+                      "@type": "ContactPoint",
+                      contactType: "customer service",
+                      email: "info.sejalengitech@gmail.com",
+                      telephone: "+91-7004767198",
+                    },
+                  ],
+                },
+                {
+                  "@type": "LocalBusiness",
+                  "@id": "https://www.sejalengitech.in/#localbusiness",
+                  name: "Sejal Engitech Private Limited",
+                  url: "https://www.sejalengitech.in/",
+                  telephone: "+91-7004767198",
+                  email: "info.sejalengitech@gmail.com",
+                  address: {
+                    "@type": "PostalAddress",
+                    streetAddress:
+                      "Abhiyanta Nagar, Ranjan Path, Bailey Road, Danapur",
+                    addressLocality: "Danapur",
+                    addressRegion: "Bihar",
+                    addressCountry: "IN",
+                  },
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://www.sejalengitech.in/#website",
+                  url: "https://www.sejalengitech.in/",
+                  name: "Sejal Engitech",
+                  publisher: {
+                    "@id": "https://www.sejalengitech.in/#organization",
+                  },
+                },
+              ],
+            },
+            null,
+            0
+          ).replace(/</g, "\\u003c"),
+        }}
+      />
+            {/* Favicons */}
+      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      <link rel="manifest" href="/site.webmanifest" />
+      <meta name="theme-color" content="#1e293b" />
+
     </Head>
   );
 }
