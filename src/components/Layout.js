@@ -3,30 +3,28 @@ import { useState } from "react";
 import SEO from "@/components/seo/SEO";
 
 export default function Layout({ children, seo }) {
-
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
 
   const NavLink = ({ href, children }) => (
-    <Link href={href} className="hover:text-cyan-300" onClick={close}>
+    <Link href={href} className="hover:text-cyan-300 transition" onClick={close}>
       {children}
     </Link>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50">
+    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
       <SEO {...seo} />
-      {/* Shared header / nav */} 
-      <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-4">
+
+      {/* Shared header / nav */}
+      <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-900/70 backdrop-blur">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2">
           <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-wide">
+            <span className="text-xl font-bold tracking-wide py-2">
               Sejal Engitech Pvt. Ltd.
             </span>
-            <span className="text-xs text-slate-400">
-              IT Services • Since 2014
-            </span>
+            <span className="text-xs text-slate-400">IT Services • Since 2014</span>
           </div>
 
           {/* Mobile menu button */}
@@ -102,46 +100,86 @@ export default function Layout({ children, seo }) {
       </header>
 
       {/* Page content */}
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
 
-      {/* Footer */}
-      <footer className="mt-10 border-t border-slate-800 bg-slate-900/80">
-        <div className="max-w-6xl mx-auto px-4 py-4 text-xs md:text-sm text-slate-400 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-          <span>
-            © {new Date().getFullYear()} Sejal Engitech Pvt. Ltd. All rights
-            reserved.
-          </span>
-          <span className="text-slate-500">
-            For Training & Digital services:{" "}
-            <a
-              href="https://alambanatech.com"
-              target="_blank"
-              rel="noreferrer"
-              className="text-cyan-300 hover:underline"
-            >
-              alambanatech.com
-            </a>
-          </span>
-          <div className="flex gap-4 text-slate-500">
-            <Link href="/privacyPolicy" className="hover:text-cyan-300">
-              Privacy Policy
-            </Link>
-            <span aria-hidden="true">•</span>
-            <Link href="/termsOfService" className="hover:text-cyan-300">
-              Terms of Service
-            </Link>
+      {/* Footer (locked essentials) */}
+      <footer className="mt-12 border-t border-slate-800 bg-slate-950">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Top: small company/contact line */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="text-sm text-slate-300">
+              <span className="font-semibold text-slate-100">
+                Sejal Engitech Pvt. Ltd.
+              </span>
+              <span className="text-slate-500"> • Patna, Bihar</span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+              <a
+                href="mailto:contact@sejalengitech.com"
+                className="text-slate-400 hover:text-cyan-300 transition"
+              >
+                info.sejalengitech@gmail.com
+              </a>
+
+              <a
+                href="https://facebook.com/sejalengitech"
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-400 hover:text-cyan-300 transition"
+              >
+                Facebook
+              </a>
+
+              <a
+                href="https://instagram.com/sejalengitech"
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-400 hover:text-cyan-300 transition"
+              >
+                Instagram
+              </a>
+            </div>
+          </div>
+
+          {/* Bottom: locked utility row */}
+          <div className="mt-6 pt-5 border-t border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <p className="text-xs text-slate-500">
+              © {new Date().getFullYear()} Sejal Engitech Pvt. Ltd. All rights
+              reserved.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+              <Link href="/privacyPolicy" className="hover:text-cyan-300 transition">
+                Privacy Policy
+              </Link>
+              <Link href="/termsOfService" className="hover:text-cyan-300 transition">
+                Terms of Service
+              </Link>
+              <Link href="/contact" className="hover:text-cyan-300 transition">
+                Contact
+              </Link>
+              <a
+                href="https://alambanatech.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-300 hover:underline"
+              >
+                alambanatech.com
+              </a>
+            </div>
           </div>
         </div>
       </footer>
-            {/* Floating WhatsApp button */}
+
+      {/* Floating WhatsApp button */}
       <a
         href="https://wa.me/919001207105?text=Hi%2C%20I%27m%20interested%20in%20your%20IT%20services."
         target="_blank"
         rel="noreferrer"
-        className="fixed bottom-18 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/40 hover:bg-[#1ebe57] transition"
+        className="fixed bottom-6 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/40 hover:bg-[#1ebe57] transition"
         aria-label="Chat on WhatsApp"
       >
-        {/* simple WhatsApp icon using SVG */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 308 308"
@@ -151,7 +189,6 @@ export default function Layout({ children, seo }) {
           <path d="M156.73 0C73.32 0 5.45 67.35 5.45 150.14c0 26.78 7.17 52.99 20.74 75.93L.21 302.72c-.48 1.43-.12 3.01.93 4.08.77.78 1.8 1.2 2.86 1.2.41 0 .82-.06 1.22-.19l79.92-25.4c21.87 11.69 46.59 17.86 71.59 17.86 83.41 0 151.27-67.35 151.27-150.14C308 67.35 240.14 0 156.73 0zm0 268.99c-23.54 0-46.34-6.8-65.94-19.66-.66-.43-1.42-.65-2.19-.65-.41 0-.82.06-1.21.19l-40.03 12.73 12.92-38.13c.42-1.24.21-2.6-.56-3.65-14.92-20.39-22.81-44.48-22.81-69.68 0-65.54 53.75-118.87 119.82-118.87 66.06 0 119.81 53.33 119.81 118.87 0 65.54-53.75 118.87-119.81 118.87z" />
         </svg>
       </a>
-
     </div>
   );
 }
