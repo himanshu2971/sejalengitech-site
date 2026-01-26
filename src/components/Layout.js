@@ -1,23 +1,63 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import SEO from "@/components/seo/SEO";
 
 export default function Layout({ children, seo }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const close = () => setOpen(false);
+  const toggle = () => setOpen((v) => !v);
+
+  const isActive = (href) => router.pathname === href;
 
   const NavLink = ({ href, children }) => (
-    <Link href={href} className="hover:text-cyan-300 transition" onClick={close}>
+    <Link
+      href={href}
+      onClick={close}
+      className={`text-sm transition ${
+        isActive(href)
+          ? "text-cyan-200"
+          : "text-slate-200/80 hover:text-cyan-200"
+      }`}
+    >
       {children}
     </Link>
   );
+
+  const navItems = useMemo(
+    () => [
+      { href: "/", label: "Home" },
+      { href: "/about", label: "About" },
+      { href: "/services", label: "IT Services" },
+      { href: "/projects", label: "Projects" },
+      { href: "/contact", label: "Contact" },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") close();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <div className="relative min-h-screen text-slate-50 flex flex-col bg-slate-950 overflow-hidden">
       <SEO {...seo} />
 
-      {/* Premium background layers (aurora + tint + noise) */}
+      {/* Premium background layers */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-80"
@@ -30,20 +70,23 @@ export default function Layout({ children, seo }) {
         />
       </div>
 
-      {/* Shared header / nav */}
+      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/35 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2">
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-wide py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-3 py-2">
+          {/* Brand */}
+          <Link href="/" onClick={close} className="flex flex-col">
+            <span className="text-lg md:text-xl font-bold tracking-wide py-2">
               Sejal Engitech Pvt. Ltd.
             </span>
-            <span className="text-xs text-slate-400">IT Services • Since 2014</span>
-          </div>
+            <span className="text-xs text-slate-200/60">
+              IT Services • Since 2014
+            </span>
+          </Link>
 
-          {/* Mobile menu button */}
+          {/* Mobile button */}
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
+            onClick={toggle}
             aria-label="Toggle menu"
             aria-expanded={open}
             className="sm:hidden group inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/10 bg-white/5 hover:border-cyan-400/70 transition"
@@ -69,68 +112,84 @@ export default function Layout({ children, seo }) {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden sm:flex items-center gap-6 text-sm">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/about">About</NavLink>
-            <NavLink href="/services">IT Services</NavLink>
-            <NavLink href="/projects">Projects</NavLink>
-            <NavLink href="/contact">Contact</NavLink>
+          <nav className="hidden sm:flex items-center gap-6">
+            {navItems.map((it) => (
+              <NavLink key={it.href} href={it.href}>
+                {it.label}
+              </NavLink>
+            ))}
 
-            {/* Child site link */}
             <a
               href="https://alambanatech.com"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs hover:border-cyan-400/70 hover:text-cyan-200 transition"
+              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200/80 hover:border-cyan-400/70 hover:text-cyan-200 transition"
             >
               Alambana (Training & Digital)
             </a>
           </nav>
         </div>
 
-        {/* Mobile dropdown */}
+        {/* Mobile overlay + dropdown */}
         {open && (
-          <div className="sm:hidden border-t border-white/10 bg-slate-950/35 backdrop-blur-xl">
-            <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-2 text-sm">
-              <NavLink href="/">Home</NavLink>
-              <NavLink href="/about">About</NavLink>
-              <NavLink href="/services">IT Services</NavLink>
-              <NavLink href="/projects">Projects</NavLink>
-              <NavLink href="/contact">Contact</NavLink>
+          <>
+            {/* overlay to close on outside click */}
+            <button
+              aria-label="Close menu overlay"
+              onClick={close}
+              className="sm:hidden fixed inset-0 z-40 bg-black/40"
+            />
 
-              <a
-                href="https://alambanatech.com"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs hover:border-cyan-400/70 hover:text-cyan-200 transition"
-                onClick={close}
-              >
-                Visit Alambana (Training & Digital)
-              </a>
+            <div className="sm:hidden relative z-50 border-t border-white/10 bg-slate-950/45 backdrop-blur-xl">
+              <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-3">
+                {navItems.map((it) => (
+                  <Link
+                    key={it.href}
+                    href={it.href}
+                    onClick={close}
+                    className={`rounded-lg px-3 py-2 text-sm transition ${
+                      isActive(it.href)
+                        ? "bg-cyan-500/10 border border-cyan-500/30 text-cyan-200"
+                        : "border border-white/10 bg-white/[0.03] text-slate-200/85 hover:text-cyan-200 hover:border-cyan-400/40"
+                    }`}
+                  >
+                    {it.label}
+                  </Link>
+                ))}
+
+                <a
+                  href="https://alambanatech.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200/85 hover:border-cyan-400/40 hover:text-cyan-200 transition"
+                  onClick={close}
+                >
+                  Visit Alambana (Training & Digital)
+                </a>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </header>
 
-      {/* Page content */}
+      {/* Content */}
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
       <footer className="mt-12 border-t border-white/10 bg-slate-950/30 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Top: small company/contact line */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div className="text-sm text-slate-300">
+            <div className="text-sm text-slate-200/70">
               <span className="font-semibold text-slate-100">
                 Sejal Engitech Pvt. Ltd.
               </span>
-              <span className="text-slate-500"> • Patna, Bihar</span>
+              <span className="text-slate-200/40"> • Patna, Bihar</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
               <a
-                href="mailto:contact@sejalengitech.com"
-                className="text-slate-400 hover:text-cyan-300 transition"
+                href="mailto:info.sejalengitech@gmail.com"
+                className="text-slate-200/60 hover:text-cyan-200 transition"
               >
                 info.sejalengitech@gmail.com
               </a>
@@ -139,7 +198,7 @@ export default function Layout({ children, seo }) {
                 href="https://facebook.com/sejalengitech"
                 target="_blank"
                 rel="noreferrer"
-                className="text-slate-400 hover:text-cyan-300 transition"
+                className="text-slate-200/60 hover:text-cyan-200 transition"
               >
                 Facebook
               </a>
@@ -148,35 +207,34 @@ export default function Layout({ children, seo }) {
                 href="https://instagram.com/sejalengitech"
                 target="_blank"
                 rel="noreferrer"
-                className="text-slate-400 hover:text-cyan-300 transition"
+                className="text-slate-200/60 hover:text-cyan-200 transition"
               >
                 Instagram
               </a>
             </div>
           </div>
 
-          {/* Bottom: locked utility row */}
           <div className="mt-6 pt-5 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-200/45">
               © {new Date().getFullYear()} Sejal Engitech Pvt. Ltd. All rights
               reserved.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
-              <Link href="/privacyPolicy" className="hover:text-cyan-300 transition">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-200/50">
+              <Link href="/privacyPolicy" className="hover:text-cyan-200 transition">
                 Privacy Policy
               </Link>
-              <Link href="/termsOfService" className="hover:text-cyan-300 transition">
+              <Link href="/termsOfService" className="hover:text-cyan-200 transition">
                 Terms of Service
               </Link>
-              <Link href="/contact" className="hover:text-cyan-300 transition">
+              <Link href="/contact" className="hover:text-cyan-200 transition">
                 Contact
               </Link>
               <a
                 href="https://alambanatech.com"
                 target="_blank"
                 rel="noreferrer"
-                className="text-cyan-300 hover:underline"
+                className="text-cyan-200 hover:underline"
               >
                 alambanatech.com
               </a>
@@ -185,7 +243,7 @@ export default function Layout({ children, seo }) {
         </div>
       </footer>
 
-      {/* Floating WhatsApp button */}
+      {/* WhatsApp */}
       <a
         href="https://wa.me/919001207105?text=Hi%2C%20I%27m%20interested%20in%20your%20IT%20services."
         target="_blank"
