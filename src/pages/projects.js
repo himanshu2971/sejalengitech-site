@@ -1,3 +1,4 @@
+// src/pages/projects.js
 import Head from "next/head";
 import Layout from "../components/Layout";
 import PageSection from "../components/PageSection";
@@ -88,6 +89,21 @@ function ProjectCard({ project }) {
           </span>
         ))}
       </div>
+
+      {/* ✅ Added: link button for non-featured cards */}
+      {project.link ? (
+        <div className="mt-3">
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-200 hover:bg-cyan-500/20 hover:border-cyan-400 transition"
+          >
+            View live project
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -147,8 +163,7 @@ export default function Projects({ projects = [] }) {
 
 // SSR: fetches projects at request-time (always fresh)
 export async function getServerSideProps({ req }) {
-  const protocol =
-    req.headers["x-forwarded-proto"]?.toString() || "http";
+  const protocol = req.headers["x-forwarded-proto"]?.toString() || "http";
   const host = req.headers.host;
 
   const res = await fetch(`${protocol}://${host}/api/projects`);
