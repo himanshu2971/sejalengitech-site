@@ -1,10 +1,11 @@
-// src/pages/index.js
 import Head from "next/head";
 import { motion } from "framer-motion";
 
 import Hero from "@/components/home/Hero";
 import FullImageBand from "@/components/home/FullImageBand";
 import HomeEnquiry from "@/components/home/HomeEnquiry";
+import WhoWeHelp from "@/components/home/WhoWeHelp";
+import HowWeWork from "@/components/home/HowWeWork";
 import { REVEAL } from "@/components/motion/reveal";
 
 export default function Home() {
@@ -39,61 +40,7 @@ export default function Home() {
         </motion.div>
       </FullImageBand>
 
-      {/* WHO WE HELP */}
-      <section className="max-w-7xl mx-auto px-4 py-8 md:py-10">
-        <motion.h2 {...REVEAL} className="text-lg md:text-xl font-semibold mb-3">
-          Who we help
-        </motion.h2>
-
-        <motion.p
-          {...REVEAL}
-          className="text-slate-300 text-sm md:text-base max-w-3xl mb-6"
-        >
-          Whether you need a simple website, a full product build, or secure
-          enterprise-grade systems, we adapt to your stage and scale.
-        </motion.p>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <motion.div
-            {...REVEAL}
-            className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-5 transition-transform duration-300 hover:-translate-y-1 hover:border-cyan-400/40"
-          >
-            <h3 className="text-sm font-semibold text-cyan-200 mb-2">
-              Local businesses
-            </h3>
-            <p className="text-sm text-slate-200/80">
-              Websites, apps, IT support, installation, and reliable systems to
-              run daily operations smoothly.
-            </p>
-          </motion.div>
-
-          <motion.div
-            {...REVEAL}
-            className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-5 transition-transform duration-300 hover:-translate-y-1 hover:border-cyan-400/40"
-          >
-            <h3 className="text-sm font-semibold text-emerald-200 mb-2">
-              Startups
-            </h3>
-            <p className="text-sm text-slate-200/80">
-              MVP development, faster iterations, and tech decisions that keep
-              cost low and growth possible.
-            </p>
-          </motion.div>
-
-          <motion.div
-            {...REVEAL}
-            className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-5 transition-transform duration-300 hover:-translate-y-1 hover:border-cyan-400/40"
-          >
-            <h3 className="text-sm font-semibold text-fuchsia-200 mb-2">
-              Enterprises
-            </h3>
-            <p className="text-sm text-slate-200/80">
-              Security, networking, modernization, and custom solutions for
-              larger teams and higher reliability needs.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <WhoWeHelp />
 
       {/* BAND 2 */}
       <FullImageBand
@@ -115,33 +62,7 @@ export default function Home() {
         </motion.div>
       </FullImageBand>
 
-      {/* HOW WE WORK */}
-      <section className="max-w-7xl mx-auto px-4 py-16 pb-16">
-        <motion.h2 {...REVEAL} className="text-lg md:text-xl font-semibold mb-3">
-          How we work
-        </motion.h2>
-
-        <div className="grid gap-4 md:grid-cols-4">
-          {[
-            ["Step 1", "Discovery", "Goals, users, risks, and timelines."],
-            ["Step 2", "Plan", "Scope, cost, and technical approach."],
-            ["Step 3", "Build", "Milestones, testing, and clear updates."],
-            ["Step 4", "Launch & Support", "Go-live, monitoring, improvements."],
-          ].map(([step, title, desc]) => (
-            <motion.div
-              key={step}
-              {...REVEAL}
-              className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 transition-transform duration-300 hover:-translate-y-1 hover:border-cyan-400/40"
-            >
-              <p className="text-xs text-slate-200/60 uppercase tracking-[0.18em] mb-1">
-                {step}
-              </p>
-              <p className="font-semibold">{title}</p>
-              <p className="text-sm text-slate-200/80">{desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      <HowWeWork />
 
       {/* HOME ENQUIRY FORM */}
       <HomeEnquiry />
