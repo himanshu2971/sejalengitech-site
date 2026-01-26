@@ -1,4 +1,3 @@
-import Layout from "@/components/Layout";
 import fs from "fs/promises";
 import path from "path";
 
@@ -6,7 +5,6 @@ export default function PrivacyPolicy({ content }) {
   const text = content || "Privacy policy not found.";
 
   return (
-    <Layout>
       <main className="max-w-6xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
         <div className="prose prose-invert">
@@ -14,7 +12,6 @@ export default function PrivacyPolicy({ content }) {
           <div className="whitespace-pre-wrap">{text}</div>
         </div>
       </main>
-    </Layout>
   );
 }
 

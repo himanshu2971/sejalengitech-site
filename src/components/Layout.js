@@ -14,11 +14,24 @@ export default function Layout({ children, seo }) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
+    <div className="relative min-h-screen text-slate-50 flex flex-col bg-slate-950 overflow-hidden">
       <SEO {...seo} />
 
+      {/* Premium background layers (aurora + tint + noise) */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-80"
+          style={{ backgroundImage: "url(/images/bg/aurora.png)" }}
+        />
+        <div className="absolute inset-0 bg-slate-950/40" />
+        <div
+          className="absolute inset-0 opacity-[0.10] mix-blend-overlay"
+          style={{ backgroundImage: "url(/images/bg/noise.png)" }}
+        />
+      </div>
+
       {/* Shared header / nav */}
-      <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-900/70 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/35 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-2 py-2">
           <div className="flex flex-col">
             <span className="text-xl font-bold tracking-wide py-2">
@@ -33,7 +46,7 @@ export default function Layout({ children, seo }) {
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={open}
-            className="sm:hidden group inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-700 bg-slate-950/40 hover:border-cyan-400 transition"
+            className="sm:hidden group inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/10 bg-white/5 hover:border-cyan-400/70 transition"
           >
             <span className="sr-only">Menu</span>
             <div className="relative h-5 w-6">
@@ -68,7 +81,7 @@ export default function Layout({ children, seo }) {
               href="https://alambanatech.com"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-slate-700 px-3 py-1 text-xs hover:border-cyan-400 hover:text-cyan-300 transition"
+              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs hover:border-cyan-400/70 hover:text-cyan-200 transition"
             >
               Alambana (Training & Digital)
             </a>
@@ -77,7 +90,7 @@ export default function Layout({ children, seo }) {
 
         {/* Mobile dropdown */}
         {open && (
-          <div className="sm:hidden border-t border-slate-800 bg-slate-900/80">
+          <div className="sm:hidden border-t border-white/10 bg-slate-950/35 backdrop-blur-xl">
             <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-2 text-sm">
               <NavLink href="/">Home</NavLink>
               <NavLink href="/about">About</NavLink>
@@ -89,7 +102,7 @@ export default function Layout({ children, seo }) {
                 href="https://alambanatech.com"
                 target="_blank"
                 rel="noreferrer"
-                className="mt-2 rounded-md border border-slate-700 px-3 py-2 text-xs hover:border-cyan-400 hover:text-cyan-300 transition"
+                className="mt-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs hover:border-cyan-400/70 hover:text-cyan-200 transition"
                 onClick={close}
               >
                 Visit Alambana (Training & Digital)
@@ -102,8 +115,8 @@ export default function Layout({ children, seo }) {
       {/* Page content */}
       <main className="flex-1">{children}</main>
 
-      {/* Footer (locked essentials) */}
-      <footer className="mt-12 border-t border-slate-800 bg-slate-950">
+      {/* Footer */}
+      <footer className="mt-12 border-t border-white/10 bg-slate-950/30 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Top: small company/contact line */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -143,7 +156,7 @@ export default function Layout({ children, seo }) {
           </div>
 
           {/* Bottom: locked utility row */}
-          <div className="mt-6 pt-5 border-t border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="mt-6 pt-5 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <p className="text-xs text-slate-500">
               © {new Date().getFullYear()} Sejal Engitech Pvt. Ltd. All rights
               reserved.
