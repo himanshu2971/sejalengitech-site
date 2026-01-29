@@ -113,7 +113,7 @@ export default function LeadershipTeam() {
             whileInView="whileInView"
             viewport={REVEAL.viewport}
           >
-            <motion.div
+            {/* <motion.div
               variants={REVEAL}
               className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-5 shadow-[0_18px_50px_-35px_rgba(0,0,0,0.7)] hover:border-cyan-500/40 transition"
             >
@@ -137,7 +137,7 @@ export default function LeadershipTeam() {
               <p className="text-sm text-slate-200/80 leading-relaxed">
                 Leads delivery across IT services, training, and digital—keeping scope, timelines, and outcomes aligned.
               </p>
-            </motion.div>
+            </motion.div> */}
 
             <motion.div
               variants={REVEAL}
