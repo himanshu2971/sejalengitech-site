@@ -15,11 +15,21 @@ const container = {
   show: { opacity: 1, transition: { staggerChildren: 0.08 } },
 };
 
+function isStartingSoon(scheduledAt) {
+  const diff = new Date(scheduledAt) - new Date();
+  return diff > 0 && diff <= 30 * 60 * 1000; // within 30 minutes
+}
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [purchases, setPurchases] = useState([]);
-  const [liveSessions, setLiveSessions] = useState([]);
+  const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const [recordings, setRecordings] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,23 +46,23 @@ export default function Dashboard() {
         .from("purchases")
         .select("*, courses(id, title, slug, description, thumbnail_url, total_lessons, instructor)")
         .eq("user_id", data.session.user.id)
-        .order("purchased_at", { ascending: false });
+        .order("created_at", { ascending: false });
 
       setPurchases(purchaseData ?? []);
 
-      // Fetch upcoming live sessions for enrolled courses
-      if (purchaseData?.length > 0) {
-        const courseIds = purchaseData.map((p) => p.course_id);
-        const { data: sessionData } = await supabase
-          .from("live_sessions")
-          .select("*, courses(title, slug)")
-          .in("course_id", courseIds)
-          .gte("scheduled_at", new Date().toISOString())
-          .order("scheduled_at", { ascending: true })
-          .limit(5);
+      // Fetch sessions (upcoming + recordings) from the correct table
+      const { data: allSessions } = await supabase
+        .from("sessions")
+        .select("*, courses(title, slug)")
+        .order("scheduled_at", { ascending: true });
 
-        setLiveSessions(sessionData ?? []);
-      }
+      const now = new Date().toISOString();
+      setUpcomingSessions(
+        (allSessions ?? []).filter((s) => s.scheduled_at >= now)
+      );
+      setRecordings(
+        (allSessions ?? []).filter((s) => s.is_recorded && s.recording_url)
+      );
 
       setLoading(false);
     });
@@ -85,10 +95,7 @@ export default function Dashboard() {
             <p className="text-sm text-slate-400 mt-1">{user?.email}</p>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              href="/academy"
-              className="text-xs text-slate-400 hover:text-cyan-200 transition"
-            >
+            <Link href="/academy" className="text-xs text-slate-400 hover:text-cyan-200 transition">
               ← Browse courses
             </Link>
             <button
@@ -100,37 +107,93 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Upcoming live sessions */}
-        {liveSessions.length > 0 && (
+        {/* ── Upcoming Live Sessions ── */}
+        {upcomingSessions.length > 0 && (
           <div className="mb-8">
             <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-red-400 animate-pulse" />
               Upcoming Live Sessions
             </h2>
             <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col gap-3">
-              {liveSessions.map((session) => (
+              {upcomingSessions.map((session) => {
+                const soon = isStartingSoon(session.scheduled_at);
+                return (
+                  <motion.div
+                    key={session.id}
+                    variants={item}
+                    className={`rounded-xl border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${
+                      soon
+                        ? "border-red-500/30 bg-red-500/[0.06]"
+                        : "border-emerald-500/20 bg-emerald-500/[0.04]"
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-medium text-slate-100">{session.title}</p>
+                        {soon && (
+                          <span className="flex items-center gap-1 text-[10px] font-semibold text-red-300 border border-red-500/30 bg-red-500/10 rounded-full px-2 py-0.5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-red-400 animate-pulse" />
+                            Starting Soon
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {session.courses?.title && <span>{session.courses.title} · </span>}
+                        {formatDate(session.scheduled_at)}
+                        {session.duration_mins ? ` · ${session.duration_mins} min` : ""}
+                      </p>
+                      {session.description && (
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{session.description}</p>
+                      )}
+                    </div>
+                    {session.meet_url ? (
+                      <a
+                        href={session.meet_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="shrink-0 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/20 transition"
+                      >
+                        Join Live ↗
+                      </a>
+                    ) : (
+                      <span className="shrink-0 text-xs text-slate-500 border border-white/10 rounded-full px-3 py-1.5">
+                        Link coming soon
+                      </span>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </div>
+        )}
+
+        {/* ── Recordings ── */}
+        {recordings.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
+              🎬 Recordings
+            </h2>
+            <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col gap-3">
+              {recordings.map((session) => (
                 <motion.div
                   key={session.id}
                   variants={item}
-                  className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                  className="rounded-xl border border-sky-500/20 bg-sky-500/[0.04] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                 >
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-100">{session.title}</p>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      {session.courses?.title} •{" "}
-                      {new Date(session.scheduled_at).toLocaleString("en-IN", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
+                      {session.courses?.title && <span>{session.courses.title} · </span>}
+                      {formatDate(session.scheduled_at)}
                     </p>
                   </div>
                   <a
-                    href={session.meet_url}
+                    href={session.recording_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="shrink-0 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-200 hover:bg-emerald-500/20 transition"
+                    className="shrink-0 rounded-full border border-sky-500/40 bg-sky-500/10 px-4 py-1.5 text-xs font-semibold text-sky-200 hover:bg-sky-500/20 transition"
                   >
-                    Join Live ↗
+                    ▶ Watch Recording
                   </a>
                 </motion.div>
               ))}
@@ -138,7 +201,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Enrolled courses */}
+        {/* ── Enrolled Courses ── */}
         <div>
           <h2 className="text-base font-semibold mb-4">My Courses</h2>
 
@@ -193,7 +256,7 @@ export default function Dashboard() {
                       </div>
                       <div className="mt-4 flex items-center justify-between">
                         <span className="text-xs text-slate-400">
-                          Enrolled {new Date(p.purchased_at).toLocaleDateString("en-IN")}
+                          Enrolled {new Date(p.created_at).toLocaleDateString("en-IN")}
                         </span>
                         <span className="text-xs text-cyan-200 font-medium">
                           Continue →

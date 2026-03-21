@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import QuizPlayer from "@/components/academy/QuizPlayer";
 
 function getYouTubeId(url) {
   if (!url) return null;
@@ -21,6 +22,7 @@ export default function LearnPage() {
   const [completed, setCompleted] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [showLessons, setShowLessons] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   useEffect(() => {
     if (!courseSlug) return;
@@ -90,6 +92,11 @@ export default function LearnPage() {
     });
   }, [courseSlug, router]);
 
+  // Reset quiz panel when lesson changes
+  useEffect(() => {
+    setShowQuiz(false);
+  }, [activeLesson?.id]);
+
   async function markComplete(lessonId) {
     if (completed.has(lessonId) || !user) return;
 
@@ -131,10 +138,7 @@ export default function LearnPage() {
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
         {/* Top bar */}
         <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-900/60 backdrop-blur-xl px-3 md:px-4 py-2.5 flex items-center gap-3">
-          <Link
-            href="/academy"
-            className="shrink-0 text-xs text-slate-400 hover:text-cyan-200 transition"
-          >
+          <Link href="/academy" className="shrink-0 text-xs text-slate-400 hover:text-cyan-200 transition">
             ← Academy
           </Link>
           <span className="text-slate-600 shrink-0">/</span>
@@ -238,7 +242,7 @@ export default function LearnPage() {
             )}
 
             {activeLesson ? (
-              <div className="max-w-4xl mx-auto px-3 md:px-6 py-4 md:py-6 flex flex-col gap-4">
+              <div className="max-w-4xl mx-auto px-3 md:px-6 py-4 md:py-6 flex flex-col gap-5">
                 {/* Video player */}
                 {videoId ? (
                   <div className="rounded-xl md:rounded-2xl overflow-hidden border border-white/10">
@@ -269,7 +273,7 @@ export default function LearnPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap">
                     <button
                       onClick={() => markComplete(activeLesson.id)}
                       disabled={completed.has(activeLesson.id)}
@@ -282,6 +286,14 @@ export default function LearnPage() {
                       {completed.has(activeLesson.id) ? "✅ Done" : "Mark done"}
                     </button>
 
+                    {/* Quiz toggle button */}
+                    <button
+                      onClick={() => setShowQuiz((v) => !v)}
+                      className="rounded-full border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-xs font-medium text-violet-300 hover:bg-violet-500/20 transition"
+                    >
+                      {showQuiz ? "Hide quiz" : "📝 Take quiz"}
+                    </button>
+
                     <button
                       onClick={goToNextLesson}
                       className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-200 hover:bg-cyan-500/20 transition"
@@ -291,12 +303,18 @@ export default function LearnPage() {
                   </div>
                 </div>
 
+                {/* Quiz panel — shown when "Take quiz" clicked */}
+                {showQuiz && (
+                  <QuizPlayer
+                    lessonId={activeLesson.id}
+                    userId={user?.id}
+                    onPass={() => markComplete(activeLesson.id)}
+                  />
+                )}
+
                 {/* Dashboard link */}
                 <div className="border-t border-white/10 pt-4">
-                  <Link
-                    href="/academy/dashboard"
-                    className="text-xs text-slate-500 hover:text-cyan-200 transition"
-                  >
+                  <Link href="/academy/dashboard" className="text-xs text-slate-500 hover:text-cyan-200 transition">
                     ← Back to dashboard
                   </Link>
                 </div>
