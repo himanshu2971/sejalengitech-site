@@ -76,7 +76,7 @@ export async function getServerSideProps({ req }) {
   const [{ count: courses }, { count: published }, { count: students }, { count: enrollments }] = await Promise.all([
     supabaseAdmin.from("courses").select("*", { count: "exact", head: true }),
     supabaseAdmin.from("courses").select("*", { count: "exact", head: true }).eq("published", true),
-    supabaseAdmin.from("users").select("*", { count: "exact", head: true }).schema("auth"),
+    supabaseAdmin.schema("auth").from("users").select("*", { count: "exact", head: true }),
     supabaseAdmin.from("purchases").select("*", { count: "exact", head: true }),
   ]);
 
