@@ -30,6 +30,7 @@ export default function Dashboard() {
   const [purchases, setPurchases] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [recordings, setRecordings] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,6 +64,10 @@ export default function Dashboard() {
       setRecordings(
         (allSessions ?? []).filter((s) => s.is_recorded && s.recording_url)
       );
+
+      // Fetch active announcements
+      const annRes = await fetch("/api/academy/announcements");
+      if (annRes.ok) setAnnouncements(await annRes.json());
 
       setLoading(false);
     });
@@ -106,6 +111,23 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
+
+        {/* ── Announcements ── */}
+        {announcements.length > 0 && (
+          <div className="mb-6 flex flex-col gap-2">
+            {announcements.map((a) => {
+              const cls = a.type === "success" ? "border-emerald-500/30 bg-emerald-500/[0.06] text-emerald-200"
+                : a.type === "warning" ? "border-amber-500/30 bg-amber-500/[0.06] text-amber-200"
+                : "border-sky-500/30 bg-sky-500/[0.06] text-sky-200";
+              return (
+                <div key={a.id} className={`rounded-xl border px-4 py-3 text-sm ${cls}`}>
+                  <p className="font-medium">{a.title}</p>
+                  <p className="text-xs opacity-80 mt-0.5">{a.message}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* ── Upcoming Live Sessions ── */}
         {upcomingSessions.length > 0 && (
