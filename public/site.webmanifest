@@ -1,6 +1,7 @@
 {
-  "name": "Sejal Engitech",
-  "short_name": "Sejal Engitech",
+  "name": "Sejal Academy",
+  "short_name": "Academy",
+  "description": "Learn IT, Tuition, Coaching & Creative skills — Sejal Academy",
   "icons": [
     {
       "src": "/android-icon-36x36.png",
@@ -33,8 +34,8 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/",
+  "start_url": "/academy",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff"
+  "background_color": "#020617",
+  "theme_color": "#020617"
 }
