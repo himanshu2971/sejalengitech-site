@@ -81,7 +81,7 @@ export default function ContactPage() {
           </div>
         </motion.div>
 
-        <div className="mt-10 grid gap-8 md:grid-cols-[1.2fr,1fr]">
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr,1fr]">
           {/* LEFT: form */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}

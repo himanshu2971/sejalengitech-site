@@ -32,7 +32,7 @@ export default function Hero() {
                   IT Services • Since 2014
                 </p>
 
-                <h1 className="mt-5 text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
+                <h1 className="mt-5 text-3xl md:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
                   Build, secure, and scale
                   <span className="block bg-gradient-to-r from-cyan-200 via-sky-200 to-indigo-200 py-2 bg-clip-text text-transparent">
                     your technology.

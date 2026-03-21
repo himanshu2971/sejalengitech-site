@@ -66,7 +66,7 @@ export default function HomeEnquiry() {
     <section className="max-w-7xl mx-auto px-4 pb-20">
       <motion.div
         {...REVEAL}
-        className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-8 md:p-10 shadow-[0_18px_50px_-35px_rgba(0,0,0,0.7)]"
+        className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-5 md:p-10 shadow-[0_18px_50px_-35px_rgba(0,0,0,0.7)]"
       >
         <h2 className="text-2xl md:text-4xl font-bold">
           Get answers to your questions

@@ -20,7 +20,7 @@ export default function HowWeWork() {
       </motion.h2>
 
       <motion.div
-        className="grid gap-4 md:grid-cols-4"
+        className="grid gap-4 sm:grid-cols-2 md:grid-cols-4"
         variants={STAGGER}
         initial="initial"
         whileInView="whileInView"

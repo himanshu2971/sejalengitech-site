@@ -10,7 +10,8 @@ export default function Layout({ children, seo }) {
   const close = () => setOpen(false);
   const toggle = () => setOpen((v) => !v);
 
-  const isActive = (href) => router.pathname === href;
+  const isActive = (href) =>
+    href === "/" ? router.pathname === "/" : router.pathname.startsWith(href);
 
   const NavLink = ({ href, children }) => (
     <Link
@@ -33,6 +34,7 @@ export default function Layout({ children, seo }) {
       { href: "/services", label: "IT Services" },
       { href: "/projects", label: "Projects" },
       { href: "/contact", label: "Contact" },
+      { href: "/academy", label: "Academy" },
     ],
     []
   );
@@ -89,7 +91,7 @@ export default function Layout({ children, seo }) {
             onClick={toggle}
             aria-label="Toggle menu"
             aria-expanded={open}
-            className="sm:hidden group inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/10 bg-white/5 hover:border-cyan-400/70 transition"
+            className="md:hidden group inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/10 bg-white/5 hover:border-cyan-400/70 transition"
           >
             <span className="sr-only">Menu</span>
             <div className="relative h-5 w-6">
@@ -112,7 +114,7 @@ export default function Layout({ children, seo }) {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden sm:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-5">
             {navItems.map((it) => (
               <NavLink key={it.href} href={it.href}>
                 {it.label}
@@ -137,10 +139,10 @@ export default function Layout({ children, seo }) {
             <button
               aria-label="Close menu overlay"
               onClick={close}
-              className="sm:hidden fixed inset-0 z-40 bg-black/40"
+              className="md:hidden fixed inset-0 z-40 bg-black/40"
             />
 
-            <div className="sm:hidden relative z-50 border-t border-white/10 bg-slate-950/45 backdrop-blur-xl">
+            <div className="md:hidden relative z-50 border-t border-white/10 bg-slate-950/45 backdrop-blur-xl">
               <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-3">
                 {navItems.map((it) => (
                   <Link

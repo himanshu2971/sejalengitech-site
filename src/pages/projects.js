@@ -208,8 +208,12 @@ export async function getServerSideProps({ req }) {
   const protocol = req.headers["x-forwarded-proto"]?.toString() || "http";
   const host = req.headers.host;
 
-  const res = await fetch(`${protocol}://${host}/api/projects`);
-  const projects = await res.json();
-
-  return { props: { projects } };
+  try {
+    const res = await fetch(`${protocol}://${host}/api/projects`);
+    const data = await res.json();
+    const projects = Array.isArray(data) ? data : [];
+    return { props: { projects } };
+  } catch {
+    return { props: { projects: [] } };
+  }
 }
