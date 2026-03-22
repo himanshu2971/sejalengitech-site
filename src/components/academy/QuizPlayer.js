@@ -110,8 +110,6 @@ export default function QuizPlayer({ lessonId, userId, onPass }) {
       <div className="flex flex-col gap-5">
         {questions.map((q, qi) => {
           const chosen = answers[q.id];
-          const isCorrect = submitted && chosen === q.correct_index;
-          const isWrong = submitted && chosen !== undefined && chosen !== q.correct_index;
 
           return (
             <div key={q.id} className="flex flex-col gap-2.5">

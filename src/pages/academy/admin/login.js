@@ -28,7 +28,7 @@ export default function AdminLogin() {
 
   return (
     <>
-      <Head><title>Admin Login | Sejal Academy</title></Head>
+      <Head><title>Admin Login | Alambana EduTech</title></Head>
       <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
         <div className="w-full max-w-xs">
           <p className="text-center text-slate-400 text-xs mb-6 uppercase tracking-widest">Academy Admin</p>

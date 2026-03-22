@@ -34,7 +34,7 @@ export default function AdminLayout({ children, title = "Admin" }) {
       {/* Logo */}
       <div className="px-4 py-5 border-b border-white/10">
         <Link href="/academy/admin" className="block">
-          <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Sejal Academy</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Alambana EduTech</p>
           <p className="text-[10px] text-slate-500 mt-0.5">Admin Panel</p>
         </Link>
       </div>
