@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import AcademyHeader from "@/components/academy/AcademyHeader";
 
 // ─── Category config ─────────────────────────────────────────────────────────
@@ -68,16 +69,13 @@ const BANNER_STYLES = {
   sky:     { bg: "from-sky-500 to-indigo-500",       text: "text-sky-50",     btn: "bg-white/20 hover:bg-white/30 text-white border border-white/30" },
 };
 
-const stagger = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
-const fadeUp  = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } } };
-
 // ─── Course Card ─────────────────────────────────────────────────────────────
 function CourseCard({ course }) {
   const isFree = !course.price || course.price === 0;
   const cat = CAT_MAP[course.category] ?? CAT_MAP.all;
 
   return (
-    <motion.div variants={fadeUp} className="group">
+    <div className="group">
       <Link href={`/academy/courses/${course.slug}`} className="block h-full">
         <div className={`h-full flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md ${cat.glow} hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300`}>
 
@@ -133,7 +131,7 @@ function CourseCard({ course }) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
 
@@ -217,19 +215,10 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
 
         {/* ─── HERO ─────────────────────────────────────────────────────── */}
         <div className="relative overflow-hidden bg-[#0B0720]">
-          {/* Animated color orbs */}
-          <motion.div animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.7, 0.5] }}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full bg-violet-600 blur-[140px] opacity-50 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-          <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-            className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-indigo-600 blur-[120px] opacity-40 translate-y-1/2 -translate-x-1/4 pointer-events-none" />
-          <motion.div animate={{ scale: [1, 1.08, 1], opacity: [0.2, 0.35, 0.2] }}
-            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-            className="absolute top-1/3 left-1/2 w-[400px] h-[400px] rounded-full bg-rose-500 blur-[100px] opacity-25 pointer-events-none" />
-          <motion.div animate={{ scale: [1, 1.06, 1], opacity: [0.2, 0.35, 0.2] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-0 left-1/4 w-[300px] h-[300px] rounded-full bg-amber-500 blur-[90px] opacity-20 pointer-events-none" />
+          {/* Static color orbs — no animation to prevent mobile flicker */}
+          <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full bg-violet-600 blur-[140px] opacity-50 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-indigo-600 blur-[120px] opacity-40 translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+          <div className="absolute top-1/3 left-1/2 w-[400px] h-[400px] rounded-full bg-rose-500 blur-[100px] opacity-25 pointer-events-none" />
 
             {/* Hero background image — full bleed */}
           <Image
@@ -395,12 +384,9 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
               </a>
             </motion.div>
           ) : (
-            <AnimatePresence mode="wait">
-              <motion.div key={activeTab} variants={stagger} initial="hidden" animate="show" exit={{ opacity: 0 }}
-                className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {filtered.map((course) => <CourseCard key={course.id} course={course} />)}
-              </motion.div>
-            </AnimatePresence>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((course) => <CourseCard key={course.id} course={course} />)}
+            </div>
           )}
 
           {/* ── Custom programs CTA ── */}
@@ -503,19 +489,22 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
 
 AcademyIndex.noLayout = true;
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const [{ data: courses }, { data: banners }] = await Promise.all([
-    supabase
+    supabaseAdmin
       .from("courses")
       .select("id, title, slug, description, thumbnail_url, price, currency, language, instructor, duration_hours, total_lessons, category, difficulty, grade_level")
       .eq("published", true)
       .order("created_at", { ascending: false }),
-    supabase
+    supabaseAdmin
       .from("banners")
       .select("id, title, subtitle, cta_text, cta_url, badge, accent")
       .eq("active", true)
       .order("order", { ascending: true }),
   ]);
 
-  return { props: { courses: courses ?? [], banners: banners ?? [] } };
+  return {
+    props: { courses: courses ?? [], banners: banners ?? [] },
+    revalidate: 60, // rebuild page in background every 60 seconds
+  };
 }
