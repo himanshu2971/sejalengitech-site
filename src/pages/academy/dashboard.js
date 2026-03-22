@@ -64,8 +64,7 @@ export default function Dashboard() {
       const [{ data: purchaseData }, { data: allSessions }, annRes] = await Promise.all([
         supabase.from("purchases")
           .select("*")
-          .eq("user_id", data.session.user.id)
-          .order("created_at", { ascending: false }),
+          .eq("user_id", data.session.user.id),
         supabase.from("sessions")
           .select("*, courses(title,slug)")
           .order("scheduled_at", { ascending: true }),

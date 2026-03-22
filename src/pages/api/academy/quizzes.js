@@ -2,9 +2,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { isAdminAuthed } from "@/lib/adminAuth";
 
 export default async function handler(req, res) {
-  if (!isAdminAuthed(req)) return res.status(401).json({ error: "Unauthorized" });
-
-  // GET quiz with questions by lesson_id
+  // GET is public — students need to fetch quizzes
   if (req.method === "GET") {
     const { lesson_id } = req.query;
     const { data, error } = await supabaseAdmin
@@ -16,6 +14,9 @@ export default async function handler(req, res) {
     if (error && error.code !== "PGRST116") return res.status(500).json({ error: error.message });
     return res.status(200).json(data ?? null);
   }
+
+  // All write operations require admin
+  if (!isAdminAuthed(req)) return res.status(401).json({ error: "Unauthorized" });
 
   // POST: create quiz + questions
   if (req.method === "POST") {
