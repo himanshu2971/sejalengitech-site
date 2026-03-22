@@ -1,18 +1,16 @@
 {
-  "name": "Sejal Academy",
-  "short_name": "Academy",
-  "description": "Learn IT, Tuition, Coaching & Creative skills — Sejal Academy",
+  "name": "Alambana EduTech",
+  "short_name": "Alambana",
+  "description": "Learn Tuition, Coaching, Tech, Creative & Professional courses. Live classes, quizzes & more.",
+  "lang": "en-IN",
+  "start_url": "/academy",
+  "scope": "/academy",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "categories": ["education", "lifestyle"],
   "icons": [
-    {
-      "src": "/android-icon-36x36.png",
-      "sizes": "36x36",
-      "type": "image/png"
-    },
-    {
-      "src": "/android-icon-48x48.png",
-      "sizes": "48x48",
-      "type": "image/png"
-    },
     {
       "src": "/android-icon-72x72.png",
       "sizes": "72x72",
@@ -31,11 +29,52 @@
     {
       "src": "/android-icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/android-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "/academy",
-  "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#020617"
+  "shortcuts": [
+    {
+      "name": "My Courses",
+      "short_name": "My Learning",
+      "description": "View your enrolled courses",
+      "url": "/academy/dashboard",
+      "icons": [{ "src": "/android-icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Browse Courses",
+      "short_name": "Courses",
+      "description": "Browse all available courses",
+      "url": "/academy",
+      "icons": [{ "src": "/android-icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/academy/screenshot-wide.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Alambana EduTech course catalog"
+    },
+    {
+      "src": "/images/academy/screenshot-mobile.jpg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Alambana EduTech on mobile"
+    }
+  ]
 }
