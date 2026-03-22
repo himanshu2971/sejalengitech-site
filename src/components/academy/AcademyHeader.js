@@ -7,7 +7,7 @@ const NAV = [
   { href: "/academy/dashboard", label: "My Learning",   icon: "🎓", authOnly: true },
 ];
 
-export default function AcademyHeader({ user, onSignOut }) {
+export default function AcademyHeader({ user, onSignOut, authReady = false }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -35,7 +35,7 @@ export default function AcademyHeader({ user, onSignOut }) {
 
         {/* ── Desktop Nav ── */}
         <nav className="hidden sm:flex items-center gap-0.5 flex-1">
-          {NAV.filter(n => !n.authOnly || user).map((n) => {
+          {NAV.filter(n => !n.authOnly || (authReady && user)).map((n) => {
             const active = isActive(n.href);
             return (
               <Link key={n.href} href={n.href}
@@ -59,7 +59,10 @@ export default function AcademyHeader({ user, onSignOut }) {
 
         {/* ── Right actions ── */}
         <div className="flex items-center gap-3 shrink-0 ml-auto">
-          {user ? (
+          {!authReady ? (
+            /* Skeleton placeholder — same height as both auth states, prevents layout shift */
+            <div className="w-[90px] h-[38px] rounded-xl bg-slate-100 animate-pulse" />
+          ) : user ? (
             <>
               {/* User avatar + email */}
               <div className="hidden sm:flex items-center gap-2.5">
@@ -93,7 +96,7 @@ export default function AcademyHeader({ user, onSignOut }) {
       {/* ── Mobile menu ── */}
       {menuOpen && (
         <div className="sm:hidden border-t-2 border-slate-100 bg-white px-4 py-3 flex flex-col gap-1 shadow-lg">
-          {NAV.filter(n => !n.authOnly || user).map((n) => {
+          {NAV.filter(n => !n.authOnly || (authReady && user)).map((n) => {
             const active = isActive(n.href);
             return (
               <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)}

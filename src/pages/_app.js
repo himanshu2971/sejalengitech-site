@@ -12,10 +12,10 @@ export default function App({ Component, pageProps }) {
   const page = (
     <motion.div
       key={router.asPath}
-      initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
     >
       <Component {...pageProps} />
     </motion.div>

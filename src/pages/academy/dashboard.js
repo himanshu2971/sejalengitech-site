@@ -50,6 +50,7 @@ function ImgWithFallback({ src, alt, gradient, className, children }) {
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [purchases, setPurchases] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [recordings, setRecordings] = useState([]);
@@ -60,6 +61,7 @@ export default function Dashboard() {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace("/academy/login"); return; }
       setUser(data.session.user);
+      setAuthReady(true);
 
       const [{ data: purchaseData }, { data: allSessions }, annRes] = await Promise.all([
         supabase.from("purchases")
@@ -119,7 +121,7 @@ export default function Dashboard() {
       <Head><title>My Dashboard | Alambana EduTech</title></Head>
 
       <div className="min-h-screen bg-[#f5f6fa]">
-        <AcademyHeader user={user} onSignOut={handleSignOut} />
+        <AcademyHeader user={user} onSignOut={handleSignOut} authReady={authReady} />
 
         {/* ══ HERO ══ */}
         <div className="relative w-full overflow-hidden bg-gradient-to-r from-violet-800 via-indigo-800 to-blue-800"

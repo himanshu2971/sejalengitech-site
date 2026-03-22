@@ -172,10 +172,12 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
   const [eq, setEq] = useState({ name: "", email: "", subject: "", message: "" });
   const [eqStatus, setEqStatus] = useState("");
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) setUser(data.session.user);
+      setAuthReady(true);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null);
@@ -211,7 +213,7 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
       </Head>
 
       <div className="min-h-screen bg-white">
-        <AcademyHeader user={user} onSignOut={handleSignOut} />
+        <AcademyHeader user={user} onSignOut={handleSignOut} authReady={authReady} />
 
         {/* ─── HERO ─────────────────────────────────────────────────────── */}
         <div className="relative overflow-hidden bg-[#0B0720]">

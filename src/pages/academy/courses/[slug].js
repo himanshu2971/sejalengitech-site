@@ -16,12 +16,14 @@ function getYouTubeId(url) {
 export default function CourseDetail({ course, modules }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [hasPurchased, setHasPurchased] = useState(false);
   const [previewLesson, setPreviewLesson] = useState(null);
   const [openModule, setOpenModule] = useState(0);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
+      setAuthReady(true);
       if (!data.session) return;
       setUser(data.session.user);
 
@@ -58,7 +60,7 @@ export default function CourseDetail({ course, modules }) {
       </Head>
 
       <div className="min-h-screen bg-slate-50">
-        <AcademyHeader user={user} onSignOut={async () => { await supabase.auth.signOut(); router.push("/academy"); }} />
+        <AcademyHeader user={user} onSignOut={async () => { await supabase.auth.signOut(); router.push("/academy"); }} authReady={authReady} />
 
         {/* Mobile sticky CTA */}
         <div className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-white border-t border-slate-100 shadow-lg px-4 py-3 flex items-center justify-between gap-3">
