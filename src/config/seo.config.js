@@ -3,7 +3,7 @@ const SEO_CONFIG = {
   defaultTitle: "Sejal Engitech | Engineering & Technology Solutions",
   description:
     "Sejal Engitech provides reliable engineering and technology-driven services with operational excellence.",
-  url: "https://www.sejalengitech.com",
+  url: "https://www.sejalengitech.in",
 };
 
 export default SEO_CONFIG;

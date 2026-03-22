@@ -85,6 +85,15 @@ const cardItem = {
   show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.3, ease: "easeOut" } },
 };
 
+const BANNER_ACCENT = {
+  cyan:    { grad: "from-cyan-900/40",    border: "border-cyan-500/30",    text: "text-cyan-200",    btn: "border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-200" },
+  violet:  { grad: "from-violet-900/40",  border: "border-violet-500/30",  text: "text-violet-200",  btn: "border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-200" },
+  emerald: { grad: "from-emerald-900/40", border: "border-emerald-500/30", text: "text-emerald-200", btn: "border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-200" },
+  amber:   { grad: "from-amber-900/40",   border: "border-amber-500/30",   text: "text-amber-200",   btn: "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-200" },
+  rose:    { grad: "from-rose-900/40",    border: "border-rose-500/30",    text: "text-rose-200",    btn: "border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-rose-200" },
+  sky:     { grad: "from-sky-900/40",     border: "border-sky-500/30",     text: "text-sky-200",     btn: "border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-sky-200" },
+};
+
 // ─────────────────────────────────────────────
 // Course card
 // ─────────────────────────────────────────────
@@ -272,8 +281,21 @@ function CategoryHero({ cat }) {
 // ─────────────────────────────────────────────
 // Main page
 // ─────────────────────────────────────────────
-export default function AcademyIndex({ courses }) {
+export default function AcademyIndex({ courses = [], banners = [] }) {
   const [activeTab, setActiveTab] = useState("all");
+  const [eq, setEq] = useState({ name: "", email: "", subject: "", message: "" });
+  const [eqStatus, setEqStatus] = useState(""); // "" | "sending" | "sent" | "error"
+
+  async function handleEnquiry(e) {
+    e.preventDefault();
+    setEqStatus("sending");
+    const res = await fetch("/api/academy/enquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eq),
+    });
+    setEqStatus(res.ok ? "sent" : "error");
+  }
 
   const activeCat = CATEGORIES.find((c) => c.value === activeTab) ?? CATEGORIES[0];
   const filtered = activeTab === "all" ? courses : courses.filter((c) => c.category === activeTab);
@@ -353,6 +375,35 @@ export default function AcademyIndex({ courses }) {
             </div>
           </div>
         </div>
+
+        {/* ── Promotional banners ── */}
+        {banners.length > 0 && (
+          <div className="flex gap-3 overflow-x-auto pb-2 mb-6 scrollbar-hide snap-x">
+            {banners.map((b) => {
+              const ac = BANNER_ACCENT[b.accent] ?? BANNER_ACCENT.cyan;
+              return (
+                <div
+                  key={b.id}
+                  className={`shrink-0 snap-start w-[300px] sm:w-[360px] rounded-2xl border ${ac.border} bg-gradient-to-r ${ac.grad} to-slate-900 p-4 flex flex-col gap-1.5`}
+                >
+                  {b.badge && (
+                    <span className={`self-start text-[10px] rounded-full border ${ac.border} px-2 py-0.5 ${ac.text}`}>
+                      {b.badge}
+                    </span>
+                  )}
+                  <p className="text-sm font-semibold text-slate-100 leading-snug">{b.title}</p>
+                  {b.subtitle && <p className="text-xs text-slate-400">{b.subtitle}</p>}
+                  <Link
+                    href={b.cta_url || "/academy"}
+                    className={`mt-2 self-start rounded-full border px-4 py-1.5 text-xs font-semibold transition ${ac.btn}`}
+                  >
+                    {b.cta_text || "Learn More"} →
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* ── Category tabs ── */}
         <div className="flex gap-2 overflow-x-auto pb-1 mb-6 scrollbar-hide snap-x">
@@ -452,17 +503,80 @@ export default function AcademyIndex({ courses }) {
             </Link>
           </div>
         )}
+        {/* ── Ask a question ── */}
+        <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+          <h2 className="text-base font-semibold mb-1">Have a question?</h2>
+          <p className="text-xs text-slate-400 mb-5">Ask about any course, schedule, or batch — we reply within 24 hours.</p>
+
+          {eqStatus === "sent" ? (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] px-5 py-4 text-sm text-emerald-200">
+              Message received! We&apos;ll get back to you soon.
+            </div>
+          ) : (
+            <form onSubmit={handleEnquiry} className="grid sm:grid-cols-2 gap-3">
+              <input
+                required
+                placeholder="Your name"
+                value={eq.name}
+                onChange={(e) => setEq((f) => ({ ...f, name: e.target.value }))}
+                className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition"
+              />
+              <input
+                required
+                type="email"
+                placeholder="Email address"
+                value={eq.email}
+                onChange={(e) => setEq((f) => ({ ...f, email: e.target.value }))}
+                className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition"
+              />
+              <input
+                placeholder="Subject (e.g. JEE batch schedule)"
+                value={eq.subject}
+                onChange={(e) => setEq((f) => ({ ...f, subject: e.target.value }))}
+                className="sm:col-span-2 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition"
+              />
+              <textarea
+                required
+                rows={3}
+                placeholder="Your question or message…"
+                value={eq.message}
+                onChange={(e) => setEq((f) => ({ ...f, message: e.target.value }))}
+                className="sm:col-span-2 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/50 transition resize-none"
+              />
+              <div className="sm:col-span-2 flex items-center gap-4">
+                <button
+                  type="submit"
+                  disabled={eqStatus === "sending"}
+                  className="rounded-lg bg-cyan-500 hover:bg-cyan-400 disabled:opacity-60 px-5 py-2 text-sm font-semibold text-slate-950 transition"
+                >
+                  {eqStatus === "sending" ? "Sending…" : "Send message"}
+                </button>
+                {eqStatus === "error" && (
+                  <p className="text-xs text-red-400">Something went wrong. Please try again.</p>
+                )}
+              </div>
+            </form>
+          )}
+        </div>
+
       </PageSection>
     </>
   );
 }
 
 export async function getServerSideProps() {
-  const { data: courses } = await supabase
-    .from("courses")
-    .select("id, title, slug, description, thumbnail_url, price, currency, language, instructor, duration_hours, total_lessons, category, difficulty, grade_level")
-    .eq("published", true)
-    .order("created_at", { ascending: false });
+  const [{ data: courses }, { data: banners }] = await Promise.all([
+    supabase
+      .from("courses")
+      .select("id, title, slug, description, thumbnail_url, price, currency, language, instructor, duration_hours, total_lessons, category, difficulty, grade_level")
+      .eq("published", true)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("banners")
+      .select("id, title, subtitle, cta_text, cta_url, badge, accent")
+      .eq("active", true)
+      .order("order", { ascending: true }),
+  ]);
 
-  return { props: { courses: courses ?? [] } };
+  return { props: { courses: courses ?? [], banners: banners ?? [] } };
 }
