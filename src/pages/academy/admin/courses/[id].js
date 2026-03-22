@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { isAdminAuthed } from "@/lib/adminAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { supabase } from "@/lib/supabase";
 
 const CATEGORIES = ["tuition","coaching","technology","creative","professional"];
 const DIFFICULTIES = ["beginner","intermediate","advanced"];
@@ -27,11 +28,48 @@ function Field({ label, value, onChange, name, type = "text", as = "input", opti
   );
 }
 
+// ─── Quiz text parser ─────────────────────────────────────────
+function parseQuizText(text) {
+  const results = [];
+  const blocks = text.trim().split(/\n\s*\n/);
+  for (const block of blocks) {
+    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (!lines.length) continue;
+    let questionText = "";
+    const options = ["", "", "", ""];
+    let correct_index = 0;
+    let explanation = "";
+    for (const line of lines) {
+      if (/^Q?\d+[\.\)]\s*/i.test(line)) {
+        questionText = line.replace(/^Q?\d+[\.\)]\s*/i, "").trim();
+      } else if (/^A[\.\)]\s*/i.test(line)) {
+        options[0] = line.replace(/^A[\.\)]\s*/i, "").trim();
+      } else if (/^B[\.\)]\s*/i.test(line)) {
+        options[1] = line.replace(/^B[\.\)]\s*/i, "").trim();
+      } else if (/^C[\.\)]\s*/i.test(line)) {
+        options[2] = line.replace(/^C[\.\)]\s*/i, "").trim();
+      } else if (/^D[\.\)]\s*/i.test(line)) {
+        options[3] = line.replace(/^D[\.\)]\s*/i, "").trim();
+      } else if (/^(answer|ans|correct)\s*[:\-]\s*/i.test(line)) {
+        const letter = line.match(/[A-D]/i)?.[0]?.toUpperCase();
+        correct_index = { A: 0, B: 1, C: 2, D: 3 }[letter] ?? 0;
+      } else if (/^(explanation|exp|note)\s*[:\-]\s*/i.test(line)) {
+        explanation = line.replace(/^(explanation|exp|note)\s*[:\-]\s*/i, "").trim();
+      }
+    }
+    if (questionText) results.push({ question: questionText, options, correct_index, explanation });
+  }
+  return results;
+}
+
 // ─── Quiz editor ─────────────────────────────────────────────
 function QuizEditor({ lessonId, initialQuiz, onSaved }) {
   const empty = { title: "Lesson Quiz", passing_score: 60, questions: [] };
   const [quiz, setQuiz] = useState(initialQuiz ?? empty);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [importText, setImportText] = useState("");
 
   function addQuestion() {
     setQuiz((q) => ({
@@ -66,12 +104,18 @@ function QuizEditor({ lessonId, initialQuiz, onSaved }) {
     setSaving(true);
     const method = quiz.id ? "PUT" : "POST";
     const body = { ...quiz, lesson_id: lessonId };
-    await fetch("/api/academy/quizzes", {
+    const res = await fetch("/api/academy/quizzes", {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+    if (res.ok && method === "POST") {
+      const created = await res.json();
+      setQuiz((q) => ({ ...q, id: created.id }));
+    }
     setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
     onSaved?.();
   }
 
@@ -122,14 +166,50 @@ function QuizEditor({ lessonId, initialQuiz, onSaved }) {
         </div>
       ))}
 
-      <div className="flex items-center gap-3 mt-2">
+      <div className="flex flex-wrap items-center gap-3 mt-2">
         <button onClick={addQuestion} className="text-xs border border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-200 rounded-md px-3 py-1.5 hover:bg-fuchsia-500/20 transition">
           + Add Question
+        </button>
+        <button
+          onClick={() => { setShowImport((v) => !v); setImportText(""); }}
+          className="text-xs border border-amber-500/30 bg-amber-500/10 text-amber-200 rounded-md px-3 py-1.5 hover:bg-amber-500/20 transition"
+        >
+          📋 Import from text
         </button>
         <button onClick={save} disabled={saving} className="text-xs border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 rounded-md px-3 py-1.5 hover:bg-emerald-500/20 transition disabled:opacity-50">
           {saving ? "Saving…" : "Save Quiz"}
         </button>
+        {saved && <span className="text-xs text-emerald-400 font-medium">✅ Quiz saved!</span>}
       </div>
+
+      {showImport && (
+        <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 flex flex-col gap-2">
+          <p className="text-[11px] text-amber-200/70 font-medium">Paste your Word quiz below. Each question must be separated by a blank line.</p>
+          <p className="text-[10px] text-amber-200/40">Format: Q1. Question text → A) Option → B) Option → Answer: B → Explanation: ... (optional)</p>
+          <textarea
+            rows={10}
+            value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+            placeholder={"Q1. What is photosynthesis?\nA) Breathing process\nB) Food making in plants\nC) Digestion\nD) Excretion\nAnswer: B\nExplanation: Plants use sunlight to make food.\n\nQ2. ..."}
+            className="w-full rounded-md border border-white/10 bg-slate-950/60 px-2.5 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-amber-500/40 resize-y"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const parsed = parseQuizText(importText);
+                if (!parsed.length) { alert("No questions found. Check the format."); return; }
+                setQuiz((q) => ({ ...q, questions: parsed }));
+                setShowImport(false);
+                setImportText("");
+              }}
+              className="text-xs border border-amber-500/40 bg-amber-500/15 text-amber-100 rounded-md px-3 py-1.5 hover:bg-amber-500/25 transition font-medium"
+            >
+              Parse & Import ({importText ? parseQuizText(importText).length : 0} questions detected)
+            </button>
+            <button onClick={() => setShowImport(false)} className="text-xs text-slate-500 hover:text-slate-300 transition">Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -140,6 +220,7 @@ function LessonRow({ lesson, onUpdate, onDelete }) {
   const [showQuiz, setShowQuiz] = useState(false);
   const [form, setForm] = useState(lesson);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const onChange = (e) => {
     const val = e.target.type === "checkbox" ? e.target.checked : e.target.type === "number" ? Number(e.target.value) : e.target.value;
@@ -178,6 +259,47 @@ function LessonRow({ lesson, onUpdate, onDelete }) {
             <Field label="Duration (mins)" name="duration_mins" type="number" value={form.duration_mins} onChange={onChange} />
             <Field label="Order" name="order" type="number" value={form.order} onChange={onChange} />
           </div>
+
+          {/* Notes upload */}
+          <div>
+            <p className="text-[11px] text-slate-400 mb-1">📄 Lesson Notes (PDF / DOC)</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <label className="cursor-pointer rounded-md border border-sky-500/30 bg-sky-500/10 text-sky-200 hover:bg-sky-500/20 px-3 py-1.5 text-xs transition">
+                {uploading ? "Uploading…" : "Upload file"}
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setUploading(true);
+                    const path = `${lesson.id}/${file.name}`;
+                    const { error } = await supabase.storage.from("notes").upload(path, file, { upsert: true });
+                    if (!error) {
+                      const { data } = supabase.storage.from("notes").getPublicUrl(path);
+                      setForm((f) => ({ ...f, notes_url: data.publicUrl }));
+                    } else {
+                      alert("Upload failed: " + error.message);
+                    }
+                    setUploading(false);
+                  }}
+                />
+              </label>
+              {form.notes_url && (
+                <a href={form.notes_url} target="_blank" rel="noopener noreferrer"
+                  className="text-[10px] text-sky-400 hover:text-sky-200 truncate max-w-xs transition">
+                  ✓ {form.notes_url.split("/").pop()}
+                </a>
+              )}
+              {form.notes_url && (
+                <button onClick={() => setForm((f) => ({ ...f, notes_url: null }))}
+                  className="text-[10px] text-slate-500 hover:text-red-400 transition">Remove</button>
+              )}
+            </div>
+          </div>
+
           <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
             <input type="checkbox" name="is_free" checked={form.is_free} onChange={onChange} className="accent-cyan-400" />
             Free preview (visible without purchase)

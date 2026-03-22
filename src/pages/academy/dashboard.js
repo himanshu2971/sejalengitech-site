@@ -110,8 +110,8 @@ export default function Dashboard() {
         <div className="relative w-full overflow-hidden bg-gradient-to-r from-violet-800 via-indigo-800 to-blue-800"
           style={{ height: "clamp(220px, 30vw, 320px)" }}>
           {/* Real photo behind gradient */}
-          <Image src="/images/academy/dashboard-hero.webp" alt="" fill
-            className="object-cover object-center opacity-40" priority />
+          <Image src="/images/academy/hero.webp" alt="" fill
+            className="object-cover object-center opacity-40" priority onError={() => {}} />
           {/* Dot grid */}
           <div className="absolute inset-0 opacity-[0.08]"
             style={{ backgroundImage: "radial-gradient(circle, white 1.5px, transparent 1.5px)", backgroundSize: "22px 22px" }} />

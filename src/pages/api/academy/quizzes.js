@@ -28,7 +28,17 @@ export default async function handler(req, res) {
     if (qErr) return res.status(500).json({ error: qErr.message });
 
     if (questions?.length) {
-      const rows = questions.map((q, i) => ({ ...q, quiz_id: quiz.id, order: i }));
+      const rows = questions.map((q, i) => ({
+        quiz_id: quiz.id,
+        order: i,
+        question: q.question,
+        option_a: q.options?.[0] ?? q.option_a ?? "",
+        option_b: q.options?.[1] ?? q.option_b ?? "",
+        option_c: q.options?.[2] ?? q.option_c ?? "",
+        option_d: q.options?.[3] ?? q.option_d ?? "",
+        correct_index: q.correct_index,
+        explanation: q.explanation ?? "",
+      }));
       const { error: questErr } = await supabaseAdmin.from("questions").insert(rows);
       if (questErr) return res.status(500).json({ error: questErr.message });
     }
@@ -42,7 +52,17 @@ export default async function handler(req, res) {
     await supabaseAdmin.from("quizzes").update({ title, passing_score }).eq("id", id);
     await supabaseAdmin.from("questions").delete().eq("quiz_id", id);
     if (questions?.length) {
-      const rows = questions.map((q, i) => ({ ...q, quiz_id: id, order: i }));
+      const rows = questions.map((q, i) => ({
+        quiz_id: id,
+        order: i,
+        question: q.question,
+        option_a: q.options?.[0] ?? q.option_a ?? "",
+        option_b: q.options?.[1] ?? q.option_b ?? "",
+        option_c: q.options?.[2] ?? q.option_c ?? "",
+        option_d: q.options?.[3] ?? q.option_d ?? "",
+        correct_index: q.correct_index,
+        explanation: q.explanation ?? "",
+      }));
       await supabaseAdmin.from("questions").insert(rows);
     }
     return res.status(200).json({ ok: true });

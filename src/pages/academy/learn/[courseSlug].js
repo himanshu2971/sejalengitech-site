@@ -301,6 +301,32 @@ export default function LearnPage() {
                   />
                 )}
 
+                {/* Lesson Notes */}
+                {activeLesson.notes_url && (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-semibold text-slate-200">📄 Lesson Notes</p>
+                      <a
+                        href={activeLesson.notes_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        className="rounded-lg border border-sky-500/30 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 px-3 py-1.5 text-xs font-medium transition shrink-0"
+                      >
+                        Download ↓
+                      </a>
+                    </div>
+                    <div className="rounded-xl border border-white/[0.07] overflow-hidden">
+                      <iframe
+                        src={activeLesson.notes_url}
+                        title="Lesson Notes"
+                        className="w-full"
+                        style={{ height: "520px", border: "none" }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* Footer nav */}
                 <div className="border-t border-white/[0.06] pt-4 flex items-center justify-between">
                   <Link

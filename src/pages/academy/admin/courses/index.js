@@ -46,10 +46,16 @@ export default function AdminCourses({ courses: initial }) {
   async function handleCreate(e) {
     e.preventDefault();
     setSaving(true);
+    const payload = {
+      ...form,
+      duration_hours: form.duration_hours === "" ? null : Number(form.duration_hours),
+      total_lessons: form.total_lessons === "" ? 0 : Number(form.total_lessons),
+      grade_level: form.grade_level === "" ? null : form.grade_level,
+    };
     const res = await fetch("/api/academy/courses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       const created = await res.json();
