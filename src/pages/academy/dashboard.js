@@ -63,7 +63,7 @@ export default function Dashboard() {
 
       const [{ data: purchaseData }, { data: allSessions }, annRes] = await Promise.all([
         supabase.from("purchases")
-          .select("*, courses(id,title,slug,description,thumbnail_url,total_lessons,instructor,category)")
+          .select("*")
           .eq("user_id", data.session.user.id)
           .order("created_at", { ascending: false }),
         supabase.from("sessions")
@@ -72,7 +72,23 @@ export default function Dashboard() {
         fetch("/api/academy/announcements"),
       ]);
 
-      setPurchases(purchaseData ?? []);
+      // Fetch courses separately to avoid join RLS issues
+      const courseIds = (purchaseData ?? []).map((p) => p.course_id).filter(Boolean);
+      let coursesMap = {};
+      if (courseIds.length > 0) {
+        const { data: coursesData } = await supabase
+          .from("courses")
+          .select("id,title,slug,description,thumbnail_url,total_lessons,instructor,category")
+          .in("id", courseIds);
+        (coursesData ?? []).forEach((c) => { coursesMap[c.id] = c; });
+      }
+
+      const enrichedPurchases = (purchaseData ?? []).map((p) => ({
+        ...p,
+        courses: coursesMap[p.course_id] ?? null,
+      }));
+
+      setPurchases(enrichedPurchases);
       const now = new Date().toISOString();
       setUpcomingSessions((allSessions ?? []).filter(s => s.scheduled_at >= now));
       setRecordings((allSessions ?? []).filter(s => s.is_recorded && s.recording_url));
