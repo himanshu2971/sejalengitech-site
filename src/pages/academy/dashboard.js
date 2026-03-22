@@ -51,6 +51,8 @@ export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [profileStats, setProfileStats] = useState({ quizzes: 0, avgScore: 0, passRate: 0 });
   const [purchases, setPurchases] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [recordings, setRecordings] = useState([]);
@@ -62,6 +64,16 @@ export default function Dashboard() {
       if (!data.session) { router.replace("/academy/login"); return; }
       setUser(data.session.user);
       setAuthReady(true);
+
+      // Fetch profile
+      const profRes = await fetch("/api/academy/profile", {
+        headers: { Authorization: `Bearer ${data.session.access_token}` },
+      });
+      if (profRes.ok) {
+        const pd = await profRes.json();
+        setProfile(pd.profile);
+        setProfileStats(pd.stats);
+      }
 
       const [{ data: purchaseData }, { data: allSessions }, annRes] = await Promise.all([
         supabase.from("purchases")
@@ -114,7 +126,7 @@ export default function Dashboard() {
     );
   }
 
-  const firstName = user?.email?.split("@")[0]?.replace(/[._]/g, " ") ?? "Student";
+  const firstName = profile?.display_name || user?.email?.split("@")[0]?.replace(/[._]/g, " ") || "Student";
 
   return (
     <>
@@ -144,15 +156,20 @@ export default function Dashboard() {
                   Hey, <span className="text-amber-300 capitalize">{firstName}!</span> 👋
                 </h1>
                 <p className="text-white/55 text-sm mt-1.5">Ready to learn something awesome today?</p>
+                <Link href="/academy/profile"
+                  className="inline-flex items-center gap-1.5 mt-3 text-xs font-bold text-violet-300 hover:text-white border border-violet-400/30 hover:border-violet-300/60 rounded-full px-3 py-1 transition">
+                  ✏ Edit Profile
+                </Link>
               </motion.div>
 
               {/* Stat pills */}
               <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}
                 className="flex items-center gap-3 flex-wrap">
                 {[
-                  { n: purchases.length,       l: "Enrolled",   emoji: "🎓", c: "rgba(251,191,36,0.25)",  bc: "rgba(251,191,36,0.5)",  tc: "#fbbf24" },
-                  { n: upcomingSessions.length, l: "Live Soon",  emoji: "📹", c: "rgba(52,211,153,0.25)",  bc: "rgba(52,211,153,0.5)",  tc: "#34d399" },
-                  { n: recordings.length,      l: "Recordings", emoji: "🎬", c: "rgba(167,139,250,0.25)", bc: "rgba(167,139,250,0.5)", tc: "#a78bfa" },
+                  { n: purchases.length,          l: "Enrolled",   emoji: "🎓", c: "rgba(251,191,36,0.25)",  bc: "rgba(251,191,36,0.5)",  tc: "#fbbf24" },
+                  { n: upcomingSessions.length,    l: "Live Soon",  emoji: "📹", c: "rgba(52,211,153,0.25)",  bc: "rgba(52,211,153,0.5)",  tc: "#34d399" },
+                  { n: recordings.length,          l: "Recordings", emoji: "🎬", c: "rgba(167,139,250,0.25)", bc: "rgba(167,139,250,0.5)", tc: "#a78bfa" },
+                  { n: `${profileStats.avgScore}%`, l: "Avg Score",  emoji: "🏆", c: "rgba(251,113,133,0.25)", bc: "rgba(251,113,133,0.5)", tc: "#fb7185" },
                 ].map(({ n, l, emoji, c, bc, tc }) => (
                   <div key={l} className="flex items-center gap-3 rounded-2xl px-4 py-3 backdrop-blur-md"
                     style={{ background: c, border: `1px solid ${bc}` }}>

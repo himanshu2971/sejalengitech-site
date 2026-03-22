@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import usePWAInstall from "@/lib/usePWAInstall";
 
 const NAV = [
   { href: "/academy/admin",              icon: "📊", label: "Dashboard" },
@@ -13,11 +14,20 @@ const NAV = [
   { href: "/academy/admin/enquiries",    icon: "📝", label: "Enquiries" },
   { href: "/academy/admin/announcements",icon: "📢", label: "Announcements" },
   { href: "/academy/admin/banners",      icon: "🎯", label: "Banners / Ads" },
+  { href: "/academy/admin/import",       icon: "📥", label: "Bulk Import" },
 ];
 
 export default function AdminLayout({ children, title = "Admin" }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [adminEmail, setAdminEmail] = useState(null);
+  const { canInstall, isInstalled, install } = usePWAInstall();
+
+  useEffect(() => {
+    fetch("/api/academy/admin-auth")
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d?.email) setAdminEmail(d.email); });
+  }, []);
 
   async function handleLogout() {
     await fetch("/api/academy/admin-auth", { method: "DELETE" });
@@ -60,6 +70,32 @@ export default function AdminLayout({ children, title = "Admin" }) {
 
       {/* Footer */}
       <div className="px-4 py-4 border-t border-white/10 flex flex-col gap-2">
+
+        {/* Logged-in admin */}
+        {adminEmail && (
+          <div className="flex items-center gap-2 px-1 mb-1">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-[10px] font-black shrink-0">
+              {adminEmail[0].toUpperCase()}
+            </div>
+            <span className="text-[10px] text-slate-400 truncate">{adminEmail}</span>
+          </div>
+        )}
+
+        {/* PWA Install button */}
+        {!isInstalled && canInstall && (
+          <button
+            onClick={install}
+            className="flex items-center gap-2 text-xs text-violet-300 hover:text-violet-100 transition text-left bg-violet-500/10 border border-violet-500/20 rounded-lg px-3 py-2"
+          >
+            <span>📲</span> Install Admin App
+          </button>
+        )}
+        {isInstalled && (
+          <div className="flex items-center gap-2 text-xs text-emerald-400 px-1">
+            <span>✓</span> App installed
+          </div>
+        )}
+
         <Link
           href="/academy"
           className="flex items-center gap-2 text-xs text-slate-500 hover:text-cyan-200 transition"
@@ -78,7 +114,7 @@ export default function AdminLayout({ children, title = "Admin" }) {
 
   return (
     <>
-      <Head><title>{title} | Sejal Admin</title></Head>
+      <Head><title>{title} | Alambana Admin</title></Head>
       <div className="min-h-screen bg-slate-950 text-slate-100 flex">
 
         {/* Desktop sidebar */}

@@ -115,7 +115,15 @@ export default function AdminEnquiries({ enquiries: initial }) {
                   {/* Previous reply */}
                   {e.reply && (
                     <div className="rounded-lg border border-sky-500/20 bg-sky-500/[0.04] p-3">
-                      <p className="text-xs text-sky-400 mb-1 uppercase tracking-wider">Your Reply</p>
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs text-sky-400 uppercase tracking-wider">Reply</p>
+                        {e.replied_by && (
+                          <p className="text-[10px] text-slate-500">
+                            by <span className="text-slate-400">{e.replied_by}</span>
+                            {e.replied_at && <> · {new Date(e.replied_at).toLocaleDateString("en-IN")}</>}
+                          </p>
+                        )}
+                      </div>
                       <p className="text-sm text-slate-200 whitespace-pre-wrap">{e.reply}</p>
                     </div>
                   )}

@@ -3,7 +3,19 @@ import AdminLayout from "@/components/academy/AdminLayout";
 import { isAdminAuthed } from "@/lib/adminAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-export default function AdminDashboard({ stats, issues }) {
+const ACTION_LABELS = {
+  replied_enquiry: "Replied to enquiry",
+  created_course: "Created course",
+  deleted_course: "Deleted course",
+  created_banner: "Created banner",
+  deleted_banner: "Deleted banner",
+  created_announcement: "Created announcement",
+  deleted_announcement: "Deleted announcement",
+  created_session: "Created session",
+  deleted_session: "Deleted session",
+};
+
+export default function AdminDashboard({ stats, issues, recentLogs }) {
   const statCards = [
     { label: "Total Courses",    value: stats.courses,     icon: "🎓", href: "/academy/admin/courses" },
     { label: "Published",        value: stats.published,   icon: "✅", href: "/academy/admin/courses" },
@@ -110,6 +122,32 @@ export default function AdminDashboard({ stats, issues }) {
             </div>
           )}
         </div>
+        {/* Recent Activity */}
+        {recentLogs && recentLogs.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Recent Activity</h2>
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] divide-y divide-white/[0.06]">
+              {recentLogs.map((log, i) => (
+                <div key={i} className="flex items-start gap-3 px-4 py-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-slate-200">
+                      {ACTION_LABELS[log.action] ?? log.action}
+                      {log.details && (
+                        <span className="text-slate-500 font-normal"> — {log.details}</span>
+                      )}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {log.admin_email ?? "admin"}
+                      {log.timestamp && (
+                        <> · {new Date(log.timestamp).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
@@ -119,6 +157,14 @@ AdminDashboard.noLayout = true;
 
 export async function getServerSideProps({ req }) {
   if (!isAdminAuthed(req)) return { redirect: { destination: "/academy/admin/login", permanent: false } };
+  const { MongoClient } = await import("mongodb");
+  let recentLogs = [];
+  try {
+    const mc = await MongoClient.connect(process.env.MONGODB_URI);
+    recentLogs = await mc.db(process.env.MONGODB_DB).collection("admin_logs").find({}).sort({ timestamp: -1 }).limit(10).toArray();
+    recentLogs = JSON.parse(JSON.stringify(recentLogs));
+    await mc.close();
+  } catch { /* non-critical */ }
 
   const [
     { count: courses },
@@ -237,6 +283,7 @@ export async function getServerSideProps({ req }) {
         openEnquiries,
       },
       issues,
+      recentLogs,
     },
   };
 }

@@ -64,7 +64,7 @@ function parseQuizText(text) {
 
 // ─── Quiz editor ─────────────────────────────────────────────
 function QuizEditor({ lessonId, initialQuiz, onSaved }) {
-  const empty = { title: "Lesson Quiz", passing_score: 60, questions: [] };
+  const empty = { title: "Lesson Quiz", passing_score: 60, questions_per_session: 0, shuffle_options: true, questions: [] };
   const [quiz, setQuiz] = useState(initialQuiz ?? empty);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -122,11 +122,30 @@ function QuizEditor({ lessonId, initialQuiz, onSaved }) {
   return (
     <div className="mt-3 rounded-xl border border-fuchsia-500/20 bg-fuchsia-500/5 p-4">
       <p className="text-xs font-semibold text-fuchsia-200 mb-3">📝 Quiz / Assessment</p>
-      <div className="grid sm:grid-cols-2 gap-3 mb-4">
+      <div className="grid sm:grid-cols-2 gap-3 mb-3">
         <Field label="Quiz Title" name="title" value={quiz.title}
           onChange={(e) => setQuiz((q) => ({ ...q, title: e.target.value }))} />
         <Field label="Passing Score %" name="passing_score" type="number" value={quiz.passing_score}
           onChange={(e) => setQuiz((q) => ({ ...q, passing_score: Number(e.target.value) }))} />
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3 mb-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+            Questions per session <span className="text-slate-600 normal-case">(0 = all {quiz.questions.length})</span>
+          </label>
+          <input type="number" min={0} max={quiz.questions.length || 999}
+            value={quiz.questions_per_session ?? 0}
+            onChange={(e) => setQuiz((q) => ({ ...q, questions_per_session: Number(e.target.value) }))}
+            className="rounded-md border border-white/10 bg-slate-950/40 px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-fuchsia-500/40" />
+        </div>
+        <div className="flex items-end gap-2 pb-1">
+          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+            <input type="checkbox" checked={quiz.shuffle_options ?? true}
+              onChange={(e) => setQuiz((q) => ({ ...q, shuffle_options: e.target.checked }))}
+              className="accent-fuchsia-500 w-4 h-4" />
+            Shuffle questions &amp; options each session
+          </label>
+        </div>
       </div>
 
       {quiz.questions.map((q, qi) => (

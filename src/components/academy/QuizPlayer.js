@@ -94,7 +94,11 @@ export default function QuizPlayer({ lessonId, userId, onPass }) {
           </span>
           <h3 className="text-sm md:text-base font-semibold text-slate-100 mt-2">{quiz.title}</h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            {questions.length} question{questions.length !== 1 ? "s" : ""} · Pass at {quiz.passing_score ?? 70}%
+            {questions.length} question{questions.length !== 1 ? "s" : ""}
+            {quiz.total_questions_in_bank > questions.length && (
+              <span className="text-violet-400"> · drawn from {quiz.total_questions_in_bank}-question bank</span>
+            )}
+            {" "}· Pass at {quiz.passing_score ?? 70}%
           </p>
         </div>
 

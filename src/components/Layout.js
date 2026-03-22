@@ -33,6 +33,7 @@ export default function Layout({ children, seo }) {
       { href: "/about", label: "About" },
       { href: "/services", label: "IT Services" },
       { href: "/projects", label: "Projects" },
+      { href: "/blog", label: "Blog" },
       { href: "/contact", label: "Contact" },
       { href: "/academy", label: "Academy" },
     ],

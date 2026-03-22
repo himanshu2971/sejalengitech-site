@@ -1,13 +1,15 @@
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import PWAInstallBanner from "@/components/PWAInstallBanner";
 
 const NAV = [
   { href: "/academy",           label: "Courses",       icon: "📚" },
   { href: "/academy/dashboard", label: "My Learning",   icon: "🎓", authOnly: true },
 ];
 
-export default function AcademyHeader({ user, onSignOut, authReady = false }) {
+export default function AcademyHeader({ user, onSignOut, authReady = false, avatarUrl = null }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -19,6 +21,7 @@ export default function AcademyHeader({ user, onSignOut, authReady = false }) {
   const initials = user?.email?.[0]?.toUpperCase() ?? "U";
 
   return (
+    <>
     <header className="sticky top-0 z-50 bg-white shadow-[0_2px_20px_rgba(0,0,0,0.08)] border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-[68px] flex items-center gap-8">
 
@@ -66,9 +69,11 @@ export default function AcademyHeader({ user, onSignOut, authReady = false }) {
             <>
               {/* User avatar + email */}
               <div className="hidden sm:flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-300/40">
-                  {initials}
-                </div>
+                <Link href="/academy/profile" className="relative w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-indigo-300/40 hover:ring-2 hover:ring-violet-400 transition shrink-0">
+                  {avatarUrl
+                    ? <Image src={avatarUrl} alt="avatar" fill className="object-cover" />
+                    : initials}
+                </Link>
                 <span className="text-xs text-slate-500 font-medium max-w-[140px] truncate">{user.email}</span>
               </div>
               {onSignOut && (
@@ -129,5 +134,7 @@ export default function AcademyHeader({ user, onSignOut, authReady = false }) {
         </div>
       )}
     </header>
+    <PWAInstallBanner appName="Alambana EduTech" delayMs={4000} />
+  </>
   );
 }
