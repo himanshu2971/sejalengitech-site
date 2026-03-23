@@ -6,7 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import AcademyHeader from "@/components/academy/AcademyHeader";
 
-export default function ProfilePage() {
+function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
@@ -201,3 +201,7 @@ export default function ProfilePage() {
     </>
   );
 }
+
+export default ProfilePage;
+
+ProfilePage.noLayout = true;
