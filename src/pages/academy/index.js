@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useInView, useSpring, useTransform } from "fra
 import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import AcademyHeader from "@/components/academy/AcademyHeader";
+import { usePriceDisplay } from "@/lib/formatters";
 
 // ─── Category config ──────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -185,6 +186,7 @@ function CourseCard({ course, index }) {
   const isFree = !course.price || course.price === 0;
   const cat = CAT_MAP[course.category] ?? CAT_MAP.all;
   const isPopular = index < 3;
+  const priceDisplay = usePriceDisplay(isFree ? 0 : course.price);
 
   return (
     <motion.div
@@ -225,7 +227,7 @@ function CourseCard({ course, index }) {
             <span className={`absolute bottom-3 right-3 rounded-full px-3 py-1 text-xs font-bold shadow-md ${
               isFree ? "bg-emerald-500 text-white" : "bg-white text-slate-800"
             }`}>
-              {isFree ? "Free" : `₹${course.price}`}
+              {priceDisplay ?? (isFree ? "Free" : `₹${course.price}`)}
             </span>
 
             {course.grade_level && (

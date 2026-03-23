@@ -94,10 +94,10 @@ export default function AdminSessions({ sessions: initial, courses }) {
 
   function formatDate(iso) {
     if (!iso) return "—";
-    return new Date(iso).toLocaleString("en-IN", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
+    return new Intl.DateTimeFormat(undefined, {
+      month: "short", day: "numeric", year: "numeric",
+      hour: "2-digit", minute: "2-digit", timeZoneName: "short",
+    }).format(new Date(iso));
   }
 
   const upcoming = sessions.filter((s) => new Date(s.scheduled_at) >= new Date());

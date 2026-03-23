@@ -2,7 +2,7 @@
   "name": "Alambana EduTech",
   "short_name": "Alambana",
   "description": "Learn Tuition, Coaching, Tech, Creative & Professional courses. Live classes, quizzes & more.",
-  "lang": "en-IN",
+  "lang": "en",
   "start_url": "/academy",
   "scope": "/academy",
   "display": "standalone",

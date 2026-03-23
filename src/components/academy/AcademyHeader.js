@@ -5,8 +5,10 @@ import { useRouter } from "next/router";
 import PWAInstallBanner from "@/components/PWAInstallBanner";
 
 const NAV = [
-  { href: "/academy",           label: "Courses",       icon: "📚" },
-  { href: "/academy/dashboard", label: "My Learning",   icon: "🎓", authOnly: true },
+  { href: "/academy",           label: "Courses",      icon: "📚" },
+  { href: "/academy/sessions",  label: "Live Classes", icon: "📡" },
+  { href: "/academy/dashboard", label: "My Learning",  icon: "🎓", authOnly: true },
+  { href: "/academy/profile",   label: "Profile",      icon: "👤", authOnly: true },
 ];
 
 export default function AcademyHeader({ user, onSignOut, authReady = false, avatarUrl = null }) {
@@ -53,11 +55,6 @@ export default function AcademyHeader({ user, onSignOut, authReady = false, avat
             );
           })}
 
-          {/* Live badge */}
-          <span className="ml-2 flex items-center gap-1.5 text-[12px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live Classes
-          </span>
         </nav>
 
         {/* ── Right actions ── */}

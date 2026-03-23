@@ -15,7 +15,10 @@ function isStartingSoon(scheduledAt) {
   return diff > 0 && diff <= 30 * 60 * 1000;
 }
 function formatDate(iso) {
-  return new Date(iso).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short", day: "numeric", year: "numeric",
+    hour: "2-digit", minute: "2-digit", timeZoneName: "short",
+  }).format(new Date(iso));
 }
 
 const CAT_COLORS = {
@@ -377,7 +380,7 @@ export default function Dashboard() {
                           <div className="mt-auto pt-3 border-t border-slate-50 flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
                             <span>📚 {course.total_lessons ?? 0} lessons</span>
                             <span className="ml-auto">
-                              {new Date(p.created_at).toLocaleDateString("en-IN")}
+                              {new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(new Date(p.created_at))}
                             </span>
                           </div>
                         </div>
