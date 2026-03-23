@@ -1,9 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabase";
-import QuizPlayer from "@/components/academy/QuizPlayer";
+
+const QuizPlayer = dynamic(() => import("@/components/academy/QuizPlayer"), {
+  loading: () => <div className="h-32 rounded-xl bg-white/[0.04] animate-pulse" />,
+  ssr: false,
+});
 
 function getYouTubeId(url) {
   if (!url) return null;
@@ -99,7 +104,7 @@ export default function LearnPage() {
     if (idx < all.length - 1) { setActiveLesson(all[idx + 1]); setShowQuiz(false); }
   }
 
-  const allLessons = modules.flatMap((m) => m.lessons ?? []);
+  const allLessons = useMemo(() => modules.flatMap((m) => m.lessons ?? []), [modules]);
   const totalLessons = allLessons.length;
   const completedCount = allLessons.filter((l) => completed.has(l.id)).length;
   const progressPct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
@@ -120,6 +125,18 @@ export default function LearnPage() {
     <>
       <Head>
         <title>{activeLesson?.title ?? course?.title} | Alambana EduTech</title>
+        <meta property="og:type" content="video.other" />
+        {videoId && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            name: activeLesson?.title ?? "",
+            description: `${course?.title ?? ""} — ${activeLesson?.title ?? ""}`,
+            thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+            contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
+            embedUrl: `https://www.youtube.com/embed/${videoId}`,
+          }) }} />
+        )}
       </Head>
 
       <div className="min-h-screen bg-[#0E0F14] text-slate-100 flex flex-col">

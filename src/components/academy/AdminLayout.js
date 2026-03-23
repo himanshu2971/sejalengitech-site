@@ -29,6 +29,19 @@ export default function AdminLayout({ children, title = "Admin" }) {
       .then((d) => { if (d?.email) setAdminEmail(d.email); });
   }, []);
 
+  // Global keyboard shortcut: / focuses first search/text input on the page
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) {
+        e.preventDefault();
+        const input = document.querySelector("input[type='text'], input[type='search'], input:not([type])");
+        if (input) { input.focus(); input.select(); }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   async function handleLogout() {
     await fetch("/api/academy/admin-auth", { method: "DELETE" });
     router.push("/academy/admin/login");
@@ -95,6 +108,8 @@ export default function AdminLayout({ children, title = "Admin" }) {
             <span>✓</span> App installed
           </div>
         )}
+
+        <p className="text-[10px] text-slate-600 px-1">Press <kbd className="font-mono bg-white/10 rounded px-1">/</kbd> to search</p>
 
         <Link
           href="/academy"

@@ -2,6 +2,11 @@
 User-agent: *
 Allow: /
 
+# *
+User-agent: *
+Disallow: /academy/admin
+Disallow: /api
+
 # Host
 Host: https://www.sejalengitech.in
 

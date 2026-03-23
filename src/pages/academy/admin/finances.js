@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AdminLayout from "@/components/academy/AdminLayout";
 import { isAdminAuthed } from "@/lib/adminAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
@@ -12,9 +12,39 @@ const STATUS_COLORS = {
 export default function AdminFinances({ purchases: initial }) {
   const [purchases, setPurchases] = useState(initial);
   const [filter, setFilter] = useState("all");
+  const [dateRange, setDateRange] = useState("all"); // "all" | "month" | "30d"
   const [updating, setUpdating] = useState(null);
 
-  const filtered = filter === "all" ? purchases : purchases.filter((p) => p.status === filter);
+  const dateFiltered = useMemo(() => {
+    if (dateRange === "all") return purchases;
+    const now = new Date();
+    return purchases.filter((p) => {
+      const d = new Date(p.created_at);
+      if (dateRange === "month") return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      if (dateRange === "30d") return (now - d) <= 30 * 24 * 60 * 60 * 1000;
+      return true;
+    });
+  }, [purchases, dateRange]);
+
+  const filtered = filter === "all" ? dateFiltered : dateFiltered.filter((p) => p.status === filter);
+
+  // Last 6 months revenue for mini chart
+  const monthlyRevenue = useMemo(() => {
+    const months = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleString("default", { month: "short" });
+      const total = purchases.filter((p) => {
+        const pd = new Date(p.created_at);
+        return pd.getMonth() === d.getMonth() && pd.getFullYear() === d.getFullYear() && p.status === "completed";
+      }).reduce((a, p) => a + (p.amount ?? 0), 0);
+      months.push({ label, total });
+    }
+    return months;
+  }, [purchases]);
+
+  const maxMonthly = Math.max(...monthlyRevenue.map((m) => m.total), 1);
 
   const totalRevenue = purchases.filter((p) => p.status === "completed").reduce((a, p) => a + (p.amount ?? 0), 0);
   const totalPending = purchases.filter((p) => p.status === "pending").reduce((a, p) => a + (p.amount ?? 0), 0);
@@ -60,6 +90,33 @@ export default function AdminFinances({ purchases: initial }) {
           ))}
         </div>
 
+        {/* Revenue chart — last 6 months */}
+        {monthlyRevenue.some((m) => m.total > 0) && (
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 mb-6">
+            <p className="text-xs text-slate-400 font-semibold mb-3">Revenue — last 6 months</p>
+            <div className="flex items-end gap-2 h-20">
+              {monthlyRevenue.map((m) => (
+                <div key={m.label} className="flex-1 flex flex-col items-center gap-1">
+                  <p className="text-[9px] text-slate-500">{m.total > 0 ? `₹${(m.total/1000).toFixed(1)}k` : ""}</p>
+                  <div className="w-full rounded-t-sm bg-cyan-500/20 hover:bg-cyan-500/40 transition"
+                    style={{ height: `${Math.max((m.total / maxMonthly) * 56, m.total > 0 ? 4 : 0)}px` }} />
+                  <p className="text-[9px] text-slate-500">{m.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Date range filter */}
+        <div className="flex gap-2 mb-3 flex-wrap">
+          {[["all", "All time"], ["month", "This month"], ["30d", "Last 30 days"]].map(([val, label]) => (
+            <button key={val} onClick={() => setDateRange(val)}
+              className={`rounded-full px-3 py-1 text-xs transition border ${dateRange === val ? "border-cyan-500/40 bg-cyan-500/10 text-cyan-200" : "border-white/10 text-slate-400 hover:text-slate-200"}`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
         {/* Filter tabs */}
         <div className="flex gap-2 mb-4 flex-wrap">
           {["all", "completed", "pending", "refunded"].map((s) => (
@@ -72,7 +129,7 @@ export default function AdminFinances({ purchases: initial }) {
                   : "border-white/10 text-slate-400 hover:text-slate-200"
               }`}
             >
-              {s} ({s === "all" ? purchases.length : purchases.filter((p) => p.status === s).length})
+              {s} ({s === "all" ? dateFiltered.length : dateFiltered.filter((p) => p.status === s).length})
             </button>
           ))}
         </div>

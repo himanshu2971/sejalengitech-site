@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AdminLayout from "@/components/academy/AdminLayout";
 import { isAdminAuthed } from "@/lib/adminAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
+const PAGE_SIZE = 20;
+
 export default function AdminStudents({ students }) {
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState(null);
+  const [page, setPage] = useState(0);
 
-  const filtered = students.filter(
-    (s) =>
-      s.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    return q ? students.filter((s) => s.email.toLowerCase().includes(q)) : students;
+  }, [students, search]);
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <AdminLayout title="Students">
@@ -22,7 +28,7 @@ export default function AdminStudents({ students }) {
           </div>
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
             placeholder="Search by email…"
             className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/60 transition w-64"
           />
@@ -54,7 +60,7 @@ export default function AdminStudents({ students }) {
               No students found.
             </div>
           )}
-          {filtered.map((s) => (
+          {paginated.map((s) => (
             <div key={s.id} className="rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden">
               <button
                 onClick={() => setExpanded(expanded === s.id ? null : s.id)}
@@ -109,6 +115,26 @@ export default function AdminStudents({ students }) {
             </div>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4 text-xs text-slate-400">
+            <span>Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filtered.length)} of {filtered.length}</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="rounded-lg border border-white/10 px-3 py-1.5 text-xs disabled:opacity-30 hover:text-slate-100 hover:border-white/20 transition"
+              >← Prev</button>
+              <span>{page + 1} / {totalPages}</span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+                className="rounded-lg border border-white/10 px-3 py-1.5 text-xs disabled:opacity-30 hover:text-slate-100 hover:border-white/20 transition"
+              >Next →</button>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );

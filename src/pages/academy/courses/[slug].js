@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import AcademyHeader from "@/components/academy/AcademyHeader";
 import { usePriceDisplay } from "@/lib/formatters";
 
@@ -86,6 +87,30 @@ export default function CourseDetail({ course, modules }) {
       <Head>
         <title>{course.title} | Alambana EduTech</title>
         <meta name="description" content={course.description} />
+        {course.thumbnail_url && <meta property="og:image" content={course.thumbnail_url} />}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([
+          {
+            "@context": "https://schema.org",
+            "@type": "Course",
+            name: course.title,
+            description: course.description ?? "",
+            url: `https://www.sejalengitech.in/academy/courses/${course.slug}`,
+            provider: { "@type": "Organization", name: "Alambana EduTech", url: "https://www.sejalengitech.in/academy" },
+            offers: { "@type": "Offer", price: course.price ?? 0, priceCurrency: "INR", availability: "https://schema.org/InStock" },
+            inLanguage: course.language ?? "en",
+            educationalLevel: course.difficulty ?? "beginner",
+            hasCourseInstance: { "@type": "CourseInstance", courseMode: "online" },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.sejalengitech.in" },
+              { "@type": "ListItem", position: 2, name: "Academy", item: "https://www.sejalengitech.in/academy" },
+              { "@type": "ListItem", position: 3, name: course.title, item: `https://www.sejalengitech.in/academy/courses/${course.slug}` },
+            ],
+          },
+        ]) }} />
       </Head>
 
       {/* Paid enrollment modal */}
@@ -152,7 +177,16 @@ export default function CourseDetail({ course, modules }) {
         </div>
 
         <div className="pb-24 md:pb-0">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
+              <Link href="/academy" className="hover:text-indigo-600 transition">Academy</Link>
+              <span>›</span>
+              {course.category && <Link href="/academy" className="hover:text-indigo-600 transition capitalize">{course.category}</Link>}
+              {course.category && <span>›</span>}
+              <span className="text-slate-700 font-medium truncate max-w-[200px]">{course.title}</span>
+            </nav>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
             <div className="grid md:grid-cols-3 gap-6 md:gap-8">
 
               {/* LEFT: Course info */}
@@ -357,10 +391,21 @@ export default function CourseDetail({ course, modules }) {
 
 CourseDetail.noLayout = true;
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+  const { data } = await supabaseAdmin
+    .from("courses")
+    .select("slug")
+    .eq("published", true);
+  return {
+    paths: (data ?? []).map((c) => ({ params: { slug: c.slug } })),
+    fallback: "blocking",
+  };
+}
+
+export async function getStaticProps({ params }) {
   const { slug } = params;
 
-  const { data: course } = await supabase
+  const { data: course } = await supabaseAdmin
     .from("courses")
     .select("*")
     .eq("slug", slug)
@@ -369,7 +414,7 @@ export async function getServerSideProps({ params }) {
 
   if (!course) return { notFound: true };
 
-  const { data: modules } = await supabase
+  const { data: modules } = await supabaseAdmin
     .from("modules")
     .select("*, lessons(*)")
     .eq("course_id", course.id)
@@ -380,5 +425,8 @@ export async function getServerSideProps({ params }) {
     lessons: (m.lessons ?? []).sort((a, b) => a.order - b.order),
   }));
 
-  return { props: { course, modules: sortedModules } };
+  return {
+    props: { course, modules: sortedModules },
+    revalidate: 300, // 5 minutes
+  };
 }

@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+const HREFLANG_LOCALES = ["en", "en-IN", "en-AU", "en-US", "en-GB"];
+
 const SITE_URL = "https://www.sejalengitech.in";
 const SITE_NAME = "Sejal Engitech";
 const DEFAULT_TITLE = "Sejal Engitech | IT Services Since 2014";
@@ -31,6 +33,12 @@ export default function SEO({
       <meta key="description" name="description" content={metaDesc} />
 
       <link key="canonical" rel="canonical" href={url} />
+
+      {/* hreflang — signals international reach to Google */}
+      {HREFLANG_LOCALES.map((locale) => (
+        <link key={`hl-${locale}`} rel="alternate" hrefLang={locale} href={url} />
+      ))}
+      <link key="hl-default" rel="alternate" hrefLang="x-default" href={url} />
 
       {noindex && (
         <meta key="robots" name="robots" content="noindex,nofollow" />
@@ -92,10 +100,10 @@ export default function SEO({
                   email: "info.sejalengitech@gmail.com",
                   address: {
                     "@type": "PostalAddress",
-                    streetAddress:
-                      "Abhiyanta Nagar, Ranjan Path, Bailey Road, Danapur",
-                    addressLocality: "Danapur",
+                    streetAddress: "Patna",
+                    addressLocality: "Patna",
                     addressRegion: "Bihar",
+                    postalCode: "800001",
                     addressCountry: "IN",
                   },
                 },

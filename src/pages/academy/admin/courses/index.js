@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -30,6 +30,7 @@ export default function AdminCourses({ courses: initial }) {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const onChange = (e) => {
     const val = e.target.type === "checkbox" ? e.target.checked : e.target.type === "number" ? Number(e.target.value) : e.target.value;
@@ -84,7 +85,18 @@ export default function AdminCourses({ courses: initial }) {
     setCourses((cs) => cs.filter((c) => c.id !== id));
   }
 
-  const filtered = filter === "all" ? courses : courses.filter((c) => c.category === filter);
+  const filtered = useMemo(() => {
+    let result = filter === "all" ? courses : courses.filter((c) => c.category === filter);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter((c) =>
+        c.title.toLowerCase().includes(q) ||
+        (c.instructor ?? "").toLowerCase().includes(q) ||
+        (c.category ?? "").includes(q)
+      );
+    }
+    return result;
+  }, [courses, filter, search]);
 
   return (
     <>
@@ -172,6 +184,23 @@ export default function AdminCourses({ courses: initial }) {
               </div>
             </form>
           )}
+
+          {/* Search + filter row */}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search courses…"
+              className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/60 transition w-56"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="text-xs text-slate-400 hover:text-slate-200 transition">
+                Clear ✕
+              </button>
+            )}
+            <span className="text-xs text-slate-500 ml-auto">{filtered.length} of {courses.length}</span>
+          </div>
 
           {/* Category filter */}
           <div className="flex flex-wrap gap-2 mb-5">

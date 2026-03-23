@@ -160,6 +160,21 @@ export default function SessionsPage({ upcoming, past }) {
       <Head>
         <title>Live Classes & Recordings | Alambana EduTech</title>
         <meta name="description" content="Join live Google Meet classes and watch recordings from Alambana EduTech. Interactive sessions with expert instructors." />
+        {upcoming.length > 0 && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(
+            upcoming.filter((s) => s.scheduled_at && s.meet_url).map((s) => ({
+              "@context": "https://schema.org",
+              "@type": "Event",
+              name: s.title,
+              startDate: s.scheduled_at,
+              eventStatus: "https://schema.org/EventScheduled",
+              eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+              location: { "@type": "VirtualLocation", url: s.meet_url },
+              organizer: { "@type": "Organization", name: "Alambana EduTech", url: "https://www.sejalengitech.in/academy" },
+              description: s.description ?? "",
+            }))
+          ) }} />
+        )}
       </Head>
 
       <div className="min-h-screen bg-slate-50">

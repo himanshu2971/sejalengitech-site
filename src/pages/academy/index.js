@@ -428,7 +428,16 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
       <Head>
         <title>Alambana EduTech — Learn anything, grow every day</title>
         <meta name="description"
-          content="Alambana EduTech — Tuition, competitive coaching, tech, creative & professional courses. Live sessions, quizzes, 70+ subtitle languages." />
+          content="Alambana EduTech — Online tuition for CBSE/JEE/NEET, tech & creative courses. Live Google Meet classes, quizzes, recordings. Join students from India, Australia & US." />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }) }} />
       </Head>
 
       <div className="min-h-screen bg-white">
