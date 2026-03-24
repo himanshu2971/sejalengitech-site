@@ -10,7 +10,7 @@ function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const [profile, setProfile] = useState({ display_name: "", phone: "", bio: "" });
+  const [profile, setProfile] = useState({ display_name: "", phone: "", bio: "", student_type: "", grade_level: "" });
   const [stats, setStats] = useState({ quizzes: 0, avgScore: 0, passRate: 0, courses: 0 });
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -35,6 +35,8 @@ function ProfilePage() {
           display_name: d.profile.display_name ?? "",
           phone: d.profile.phone ?? "",
           bio: d.profile.bio ?? "",
+          student_type: d.profile.student_type ?? "",
+          grade_level: d.profile.grade_level ?? "",
         });
         setAvatarUrl(d.profile.avatar_url ?? null);
         setStats(d.stats);
@@ -183,6 +185,40 @@ function ProfilePage() {
                 placeholder="Tell us a bit about yourself…"
                 className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition resize-none"
               />
+            </div>
+
+            <div className="border-t border-slate-100 pt-4 flex flex-col gap-4">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Learning Profile</p>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-slate-600">I am a…</label>
+                <select
+                  value={profile.student_type}
+                  onChange={(e) => setProfile((p) => ({ ...p, student_type: e.target.value, grade_level: "" }))}
+                  className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-400 transition bg-white"
+                >
+                  <option value="">Select (optional)</option>
+                  <option value="school">School Student (Class 1–12)</option>
+                  <option value="college">College / University Student</option>
+                  <option value="professional">Working Professional</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {profile.student_type === "school" && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-slate-600">Class</label>
+                  <select
+                    value={profile.grade_level}
+                    onChange={(e) => setProfile((p) => ({ ...p, grade_level: e.target.value }))}
+                    className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-400 transition bg-white"
+                  >
+                    <option value="">Select class</option>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <option key={i + 1} value={`class_${i + 1}`}>Class {i + 1}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             {error && <p className="text-sm text-red-500">{error}</p>}

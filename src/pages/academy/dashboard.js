@@ -61,6 +61,8 @@ export default function Dashboard() {
   const [recordings, setRecordings] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingToken, setOnboardingToken] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -76,6 +78,8 @@ export default function Dashboard() {
         const pd = await profRes.json();
         setProfile(pd.profile);
         setProfileStats(pd.stats);
+        setOnboardingToken(data.session.access_token);
+        if (!pd.profile?.student_type) setShowOnboarding(true);
       }
 
       const [{ data: purchaseData }, { data: allSessions }, annRes] = await Promise.all([
@@ -118,6 +122,17 @@ export default function Dashboard() {
     router.push("/academy");
   }
 
+  async function saveStudentType(type) {
+    setShowOnboarding(false);
+    if (!type || !onboardingToken) return;
+    setProfile((p) => ({ ...p, student_type: type }));
+    await fetch("/api/academy/profile", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${onboardingToken}` },
+      body: JSON.stringify({ student_type: type }),
+    });
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -137,6 +152,54 @@ export default function Dashboard() {
 
       <div className="min-h-screen bg-[#f5f6fa]">
         <AcademyHeader user={user} onSignOut={handleSignOut} authReady={authReady} />
+
+        {/* ══ ONBOARDING MODAL ══ */}
+        {showOnboarding && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-7"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg shadow-indigo-200">
+                🎓
+              </div>
+              <h2 className="text-xl font-black text-slate-900 text-center">Welcome to Alambana!</h2>
+              <p className="text-sm text-slate-500 text-center mt-2 mb-6 leading-relaxed">
+                Tell us about yourself so we can personalise your learning experience.
+              </p>
+
+              <div className="flex flex-col gap-2">
+                {[
+                  { type: "school",       label: "School Student",        sub: "Class 1–12",              emoji: "📚" },
+                  { type: "college",      label: "College Student",        sub: "Entrance exams & beyond", emoji: "🏆" },
+                  { type: "professional", label: "Working Professional",   sub: "Upskilling & career",     emoji: "💼" },
+                  { type: "other",        label: "Just Exploring",         sub: "Show me everything",      emoji: "✨" },
+                ].map(({ type, label, sub, emoji }) => (
+                  <button
+                    key={type}
+                    onClick={() => saveStudentType(type)}
+                    className="flex items-center gap-3 rounded-2xl border border-slate-100 hover:border-indigo-300 hover:bg-indigo-50 px-4 py-3 text-left transition-all group"
+                  >
+                    <span className="text-xl shrink-0">{emoji}</span>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{label}</p>
+                      <p className="text-xs text-slate-400">{sub}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => saveStudentType(null)}
+                className="mt-4 w-full text-xs text-slate-400 hover:text-slate-600 transition text-center py-1"
+              >
+                Skip for now
+              </button>
+            </motion.div>
+          </div>
+        )}
 
         {/* ══ HERO ══ */}
         <div className="relative w-full overflow-hidden bg-gradient-to-r from-violet-800 via-indigo-800 to-blue-800"

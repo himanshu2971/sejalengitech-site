@@ -70,13 +70,13 @@ export default function TeacherLogin() {
       return;
     }
 
-    // Save display_name to profiles table
-    if (data.user) {
-      await fetch("/api/academy/profile", {
-        method: "PUT",
+    // Mark as pending_teacher (sets role = 'pending_teacher' in profiles)
+    if (data.session?.access_token) {
+      await fetch("/api/academy/teacher/request-access", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${data.session?.access_token ?? ""}`,
+          Authorization: `Bearer ${data.session.access_token}`,
         },
         body: JSON.stringify({ display_name: suName.trim() }),
       }).catch(() => {});

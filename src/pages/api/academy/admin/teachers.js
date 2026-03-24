@@ -4,14 +4,14 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 export default async function handler(req, res) {
   if (!isAdminAuthed(req)) return res.status(401).json({ error: "Unauthorized" });
 
-  // GET — list all teachers with their assigned courses
+  // GET — list active teachers + pending approval requests
   if (req.method === "GET") {
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
       .select("user_id, display_name, role")
-      .eq("role", "teacher");
+      .in("role", ["teacher", "pending_teacher"]);
 
-    if (!profiles?.length) return res.status(200).json([]);
+    if (!profiles?.length) return res.status(200).json({ teachers: [], pending: [] });
 
     const userIds = profiles.map((p) => p.user_id);
 
@@ -27,14 +27,18 @@ export default async function handler(req, res) {
       assignMap[a.teacher_user_id].push({ course_id: a.course_id, title: a.courses?.title });
     });
 
-    const teachers = profiles.map((p) => ({
+    const all = profiles.map((p) => ({
       user_id: p.user_id,
       display_name: p.display_name,
-      ...(userMap[p.user_id] ?? {}),
+      role: p.role,
+      ...(userMap[p.user_id] ?? { email: "Unknown" }),
       courses: assignMap[p.user_id] ?? [],
     }));
 
-    return res.status(200).json(teachers);
+    return res.status(200).json({
+      teachers: all.filter((t) => t.role === "teacher"),
+      pending: all.filter((t) => t.role === "pending_teacher"),
+    });
   }
 
   // POST — promote a user to teacher by email
@@ -70,10 +74,20 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
-  // PATCH — assign or unassign a teacher from a course
+  // PATCH — approve pending teacher OR assign/unassign from a course
   if (req.method === "PATCH") {
-    const { teacher_user_id, course_id, action } = req.body; // action: "assign" | "unassign"
-    if (!teacher_user_id || !course_id) return res.status(400).json({ error: "teacher_user_id and course_id required" });
+    const { teacher_user_id, course_id, action } = req.body; // action: "approve" | "assign" | "unassign"
+    if (!teacher_user_id) return res.status(400).json({ error: "teacher_user_id required" });
+
+    if (action === "approve") {
+      const { error } = await supabaseAdmin.from("profiles")
+        .update({ role: "teacher", updated_at: new Date().toISOString() })
+        .eq("user_id", teacher_user_id);
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ ok: true });
+    }
+
+    if (!course_id) return res.status(400).json({ error: "course_id required" });
 
     if (action === "assign") {
       const { error } = await supabaseAdmin.from("teacher_courses")

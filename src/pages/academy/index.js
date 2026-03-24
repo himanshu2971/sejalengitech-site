@@ -382,14 +382,25 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [phraseIndex, setPhraseIndex] = useState(0);
+  const [studentType, setStudentType] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setUser(data.session.user);
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) {
+        setUser(data.session.user);
+        const res = await fetch("/api/academy/profile", {
+          headers: { Authorization: `Bearer ${data.session.access_token}` },
+        });
+        if (res.ok) {
+          const pd = await res.json();
+          setStudentType(pd.profile?.student_type ?? null);
+        }
+      }
       setAuthReady(true);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null);
+      if (!session) setStudentType(null);
     });
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -400,8 +411,23 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
     return () => clearInterval(id);
   }, []);
 
-  const activeCat = CAT_MAP[activeTab] ?? CAT_MAP.all;
-  const filtered = activeTab === "all" ? courses : courses.filter((c) => c.category === activeTab);
+  // Smart catalog: hide irrelevant categories based on student type
+  const hiddenCategories = new Set(
+    studentType === "school"       ? ["professional"] :
+    studentType === "college"      ? ["tuition"] :
+    studentType === "professional" ? ["tuition"] :
+    []
+  );
+  const visibleCategories = CATEGORIES.filter((c) => !hiddenCategories.has(c.value));
+  const visibleCourses = courses.filter((c) => !hiddenCategories.has(c.category));
+
+  // If active tab is now hidden, treat as "all"
+  const safeTab = hiddenCategories.has(activeTab) ? "all" : activeTab;
+  const activeCat = CAT_MAP[safeTab] ?? CAT_MAP.all;
+
+  const filtered = safeTab === "all"
+    ? visibleCourses
+    : courses.filter((c) => c.category === safeTab);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -671,7 +697,7 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
 
             <div className="grid sm:grid-cols-3 gap-4">
               {PATHS.map((path) => {
-                const isSelected = activeTab === path.tab;
+                const isSelected = safeTab === path.tab;
                 return (
                   <button
                     key={path.tab}
@@ -748,9 +774,9 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
                   Courses
                 </span>
               </h2>
-              <p className="text-slate-500 text-sm mt-1">{courses.length} courses across 5 categories</p>
+              <p className="text-slate-500 text-sm mt-1">{visibleCourses.length} courses{hiddenCategories.size > 0 ? " for you" : " across 5 categories"}</p>
             </div>
-            {activeTab !== "all" && (
+            {safeTab !== "all" && (
               <button
                 onClick={() => setActiveTab("all")}
                 className="text-xs text-slate-500 hover:text-indigo-600 transition font-semibold shrink-0"
@@ -762,9 +788,9 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
 
           {/* Category tabs */}
           <div className="flex gap-2 overflow-x-auto pb-1 mb-7 scrollbar-hide snap-x">
-            {CATEGORIES.map((cat) => {
-              const isActive = activeTab === cat.value;
-              const count = cat.value === "all" ? courses.length : courses.filter((c) => c.category === cat.value).length;
+            {visibleCategories.map((cat) => {
+              const isActive = safeTab === cat.value;
+              const count = cat.value === "all" ? visibleCourses.length : courses.filter((c) => c.category === cat.value).length;
 
               return (
                 <button key={cat.value} onClick={() => setActiveTab(cat.value)}
@@ -784,7 +810,7 @@ export default function AcademyIndex({ courses = [], banners = [] }) {
 
           {/* Category sub-banner */}
           <AnimatePresence mode="wait">
-            <CategoryBanner key={activeTab} cat={activeCat} />
+            <CategoryBanner key={safeTab} cat={activeCat} />
           </AnimatePresence>
 
           {/* Course grid */}
