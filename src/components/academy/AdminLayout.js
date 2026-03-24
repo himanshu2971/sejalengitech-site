@@ -9,6 +9,7 @@ const NAV = [
   { href: "/academy/admin/courses",      icon: "🎓", label: "Courses" },
   { href: "/academy/admin/sessions",     icon: "📡", label: "Live Sessions" },
   { href: "/academy/admin/students",     icon: "👥", label: "Students" },
+  { href: "/academy/admin/teachers",     icon: "👨‍🏫", label: "Teachers" },
   { href: "/academy/admin/finances",     icon: "💰", label: "Finances" },
   { href: "/academy/admin/analytics",    icon: "📈", label: "Analytics" },
   { href: "/academy/admin/enquiries",    icon: "📝", label: "Enquiries" },

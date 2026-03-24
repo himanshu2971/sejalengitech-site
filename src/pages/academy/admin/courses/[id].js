@@ -417,13 +417,29 @@ function ModuleSection({ mod, onUpdate, onDelete }) {
 }
 
 // ─── Main page ────────────────────────────────────────────────
-export default function CourseEditor({ course: initial, modules: initialModules }) {
+export default function CourseEditor({ course: initial, modules: initialModules, allTeachers = [], assignedTeacherIds: initialAssigned = [] }) {
   const [course, setCourse] = useState(initial);
   const [modules, setModules] = useState(initialModules);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [newModTitle, setNewModTitle] = useState("");
   const [addingMod, setAddingMod] = useState(false);
+  const [assignedIds, setAssignedIds] = useState(new Set(initialAssigned));
+  const [togglingTeacher, setTogglingTeacher] = useState({});
+
+  async function toggleTeacher(teacherId, isAssigned) {
+    setTogglingTeacher((t) => ({ ...t, [teacherId]: true }));
+    await fetch("/api/academy/admin/teachers", {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ teacher_user_id: teacherId, course_id: course.id, action: isAssigned ? "unassign" : "assign" }),
+    });
+    setAssignedIds((ids) => {
+      const next = new Set(ids);
+      isAssigned ? next.delete(teacherId) : next.add(teacherId);
+      return next;
+    });
+    setTogglingTeacher((t) => ({ ...t, [teacherId]: false }));
+  }
 
   const onChange = (e) => {
     const val = e.target.type === "checkbox" ? e.target.checked : e.target.type === "number" ? Number(e.target.value) : e.target.value;
@@ -514,6 +530,36 @@ export default function CourseEditor({ course: initial, modules: initialModules 
             </label>
           </form>
 
+          {/* Assigned Teachers */}
+          {allTeachers.length > 0 && (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+              <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">👨‍🏫 Assigned Teachers</h2>
+              <p className="text-xs text-slate-500 mb-3">Selected teachers can edit this course&apos;s content in their portal.</p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {allTeachers.map((t) => {
+                  const isAssigned = assignedIds.has(t.user_id);
+                  const busy = togglingTeacher[t.user_id];
+                  return (
+                    <button
+                      key={t.user_id}
+                      onClick={() => toggleTeacher(t.user_id, isAssigned)}
+                      disabled={busy}
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs text-left transition disabled:opacity-50 ${
+                        isAssigned
+                          ? "border-amber-500/40 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
+                          : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-slate-200"
+                      }`}
+                    >
+                      <span className="shrink-0">{isAssigned ? "✓" : "○"}</span>
+                      <span className="truncate flex-1">{t.display_name || t.email}</span>
+                      {busy && <span className="w-3 h-3 border border-current/30 border-t-current rounded-full animate-spin shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Thumbnail placeholder info */}
           <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-200">
             <p className="font-semibold mb-1">📸 Thumbnail Image</p>
@@ -570,5 +616,21 @@ export async function getServerSideProps({ req, params }) {
     })),
   }));
 
-  return { props: { course, modules: sorted } };
+  // Fetch teachers for assignment panel
+  const { data: teacherProfiles } = await supabaseAdmin.from("profiles").select("user_id, display_name").eq("role", "teacher");
+  const teacherUserIds = (teacherProfiles ?? []).map((p) => p.user_id);
+  let allTeachers = [];
+  if (teacherUserIds.length > 0) {
+    const { data: users } = await supabaseAdmin.schema("auth").from("users").select("id, email").in("id", teacherUserIds);
+    const userMap = Object.fromEntries((users ?? []).map((u) => [u.id, u]));
+    allTeachers = (teacherProfiles ?? []).map((p) => ({
+      user_id: p.user_id,
+      display_name: p.display_name ?? null,
+      email: userMap[p.user_id]?.email ?? "",
+    }));
+  }
+  const { data: assignments } = await supabaseAdmin.from("teacher_courses").select("teacher_user_id").eq("course_id", params.id);
+  const assignedTeacherIds = (assignments ?? []).map((a) => a.teacher_user_id);
+
+  return { props: { course, modules: sorted, allTeachers, assignedTeacherIds } };
 }
